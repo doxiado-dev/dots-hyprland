@@ -45,20 +45,20 @@ const DockSeparator = (props = {}) => Box({
     className: 'dock-separator',
 })
 
-const PinButton = () => Widget.Button({
-    className: 'dock-app-btn dock-app-btn-animate',
-    tooltipText: 'Pin Dock',
-    child: Widget.Box({
-        homogeneous: true,
-        className: 'dock-app-icon txt',
-        child: MaterialIcon('push_pin', 'hugeass')
-    }),
-    onClicked: (self) => {
-        isPinned = !isPinned
-        self.className = `${isPinned ? "pinned-dock-app-btn" : "dock-app-btn animate"} dock-app-btn-animate`
-    },
-    setup: setupCursorHover,
-})
+// const PinButton = () => Widget.Button({
+//     className: 'dock-app-btn dock-app-btn-animate',
+//     tooltipText: 'Pin Dock',
+//     child: Widget.Box({
+//         homogeneous: true,
+//         className: 'dock-app-icon txt',
+//         child: MaterialIcon('push_pin', 'hugeass')
+//     }),
+//     onClicked: (self) => {
+//         isPinned = !isPinned
+//         self.className = `${isPinned ? "pinned-dock-app-btn" : "dock-app-btn animate"} dock-app-btn-animate`
+//     },
+//     setup: setupCursorHover,
+// })
 
 const LauncherButton = () => Widget.Button({
     className: 'dock-app-btn dock-app-btn-animate',
@@ -119,10 +119,10 @@ const Taskbar = (monitor) => Widget.Box({
                 const client = Hyprland.clients[i];
                 if (client["pid"] == -1) return;
                 const appClass = substitute(client.class);
-                // for (const appName of userOptions.dock.pinnedApps) {
-                //     if (appClass.includes(appName.toLowerCase()))
-                //         return null;
-                // }
+                // Check if the app is pinned
+                if (userOptions.dock.pinnedApps.some(appName => appClass.toLowerCase().includes(appName.toLowerCase()))) {
+                    continue;
+                }
                 let appClassLower = appClass.toLowerCase()
                 let path = ''
                 if (cachePath[appClassLower]) { path = cachePath[appClassLower] }
@@ -152,6 +152,10 @@ const Taskbar = (monitor) => Widget.Box({
             });
             if (ExclusiveWindow(newClient)) { return }
             let appClass = newClient.class
+            // Check if the app is pinned
+            if (userOptions.dock.pinnedApps.some(appName => appClass.toLowerCase().includes(appName.toLowerCase()))) {
+                return;
+            }
             let appClassLower = appClass.toLowerCase()
             let path = ''
             if (cachePath[appClassLower]) { path = cachePath[appClassLower] }
@@ -232,9 +236,16 @@ const PinnedApps = () => Widget.Box({
 
 export default (monitor = 0) => {
     const dockContent = Box({
+        // TODO: Another method..
         className: 'dock-bg spacing-h-5',
+        css: `
+            .dock-bg {
+                padding: 5px; 
+                min-height: 40px; 
+            }
+        `,
         children: [
-            PinButton(),
+            // PinButton(),
             PinnedApps(),
             DockSeparator(),
             Taskbar(),
@@ -298,3 +309,4 @@ export default (monitor = 0) => {
         })
     })
 }
+

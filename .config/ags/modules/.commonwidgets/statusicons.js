@@ -8,6 +8,8 @@ import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
 import Network from 'resource:///com/github/Aylur/ags/service/network.js';
 import Notifications from 'resource:///com/github/Aylur/ags/service/notifications.js';
 import { languages } from './statusicons_languages.js';
+import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
+import { AnimatedCircProg } from "./cairo_circularprogress.js";
 
 // A guessing func to try to support langs not listed in data/languages.js
 function isLanguageMatch(abbreviation, word) {
@@ -82,7 +84,7 @@ export const NotificationIndicator = (notifCenterName = 'sideright') => {
     return widget;
 }
 
-export const BluetoothIndicator = () => Widget.Stack({
+export const BluetoothIndicator = (isTopbar = false) => Widget.Stack({
     transition: 'slide_up_down',
     transitionDuration: userOptions.animations.durationSmall,
     children: {
@@ -92,6 +94,7 @@ export const BluetoothIndicator = () => Widget.Stack({
     setup: (self) => self
         .hook(Bluetooth, stack => {
             stack.shown = String(Bluetooth.enabled);
+            stack.visible = !(isTopbar && Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
         })
     ,
 });
@@ -279,6 +282,26 @@ const OptionalKeyboardLayout = async () => {
 };
 const optionalKeyboardLayoutInstance = await OptionalKeyboardLayout();
 
+const UtilButton = ({ name, icon, onClicked }) => Widget.Button({
+    vpack: 'center',
+    tooltipText: name,
+    onClicked: onClicked,
+    className: 'bar-util-btn icon-material txt-norm',
+    label: `${icon}`,
+});
+
+const Utilities = () => Widget.Box({
+    hpack: 'center',
+    className: 'spacing-h-4',
+    children: [
+        UtilButton({
+            name: 'Color picker', icon: 'colorize', onClicked: () => {
+                Utils.execAsync(['hyprpicker', '-a']).catch(print)
+            }
+        }),
+    ]
+});
+
 export const StatusIcons = (props = {}) => Widget.Box({
     ...props,
     child: Widget.Box({
@@ -290,8 +313,66 @@ export const StatusIcons = (props = {}) => Widget.Box({
             NetworkIndicator(),
             Widget.Box({
                 className: 'spacing-h-5',
-                children: [BluetoothIndicator(), BluetoothDevices()]
-            })
+                children: [
+                    BluetoothIndicator(true), // Pass true to indicate it's in the topbar
+                    BluetoothDevices(), // Ensure BluetoothDevices is still shown
+                ]
+            }),
+            Utilities(),
+            BarBattery(), // Add BarBattery to StatusIcons
         ]
     })
 });
+
+const BarBattery = () => Widget.Box({
+    className: 'spacing-h-4 bar-batt-txt',
+    children: [
+        Widget.Revealer({
+            transitionDuration: userOptions.animations.durationSmall,
+            revealChild: false,
+            transition: 'slide_right',
+            child: MaterialIcon('bolt', 'norm', { tooltipText: "Charging" }),
+            setup: (self) => self.hook(Battery, revealer => {
+                self.revealChild = Battery.charging;
+            }),
+        }),
+        Widget.Label({
+            className: 'txt-smallie',
+            setup: (self) => self.hook(Battery, label => {
+                label.label = `${Number.parseFloat(Battery.percent.toFixed(1))}%`;
+            }),
+        }),
+        Widget.Overlay({
+            child: Widget.Box({
+                vpack: 'center',
+                className: 'bar-batt',
+                homogeneous: true,
+                children: [
+                    MaterialIcon('battery_full', 'small'),
+                ],
+                setup: (self) => self.hook(Battery, box => {
+                    box.toggleClassName('bar-batt-low', Battery.percent <= userOptions.battery.low);
+                    box.toggleClassName('bar-batt-full', Battery.charged);
+                }),
+            }),
+            overlays: [
+                BatBatteryProgress(),
+            ]
+        }),
+    ]
+});
+
+const BatBatteryProgress = () => {
+    const _updateProgress = (circprog) => { // Set circular progress value
+        circprog.css = `font-size: ${Math.abs(Battery.percent)}px;`
+
+        circprog.toggleClassName('bar-batt-circprog-low', Battery.percent <= userOptions.battery.low);
+        circprog.toggleClassName('bar-batt-circprog-full', Battery.charged);
+    }
+    return AnimatedCircProg({
+        className: 'bar-batt-circprog',
+        vpack: 'center', hpack: 'center',
+        extraSetup: (self) => self
+            .hook(Battery, _updateProgress)
+    });
+}

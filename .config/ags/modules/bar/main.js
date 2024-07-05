@@ -35,10 +35,15 @@ const FocusOptionalWorkspaces = async () => {
 };
 
 export const Bar = async (monitor = 0) => {
-    const SideModule = (children) => Widget.Box({
+    const SideModule = (children, margin = 0) => Widget.Box({
         className: 'bar-sidemodule',
         children: children,
+        margin_end: margin,
     });
+    const Spacer = () => Widget.Box({
+        className: 'spacer',
+    });
+
     const normalBarContent = Widget.CenterBox({
         className: 'bar-bg',
         setup: (self) => {
@@ -46,31 +51,41 @@ export const Bar = async (monitor = 0) => {
             const minHeight = styleContext.get_property('min-height', Gtk.StateFlags.NORMAL);
             // execAsync(['bash', '-c', `hyprctl keyword monitor ,addreserved,${minHeight},0,0,0`]).catch(print);
         },
-        startWidget: (await WindowTitle(monitor)),
-        centerWidget: Widget.Box({
-            className: 'spacing-h-4',
+        startWidget: Widget.Box({
             children: [
-                SideModule([Music()]),
+                await WindowTitle(monitor),
+                Spacer(),
                 Widget.Box({
                     homogeneous: true,
                     children: [await NormalOptionalWorkspaces()],
                 }),
+                SideModule([Music()], 15), // Added margin of 15 after Music widget
+            ],
+        }),
+        centerWidget: Widget.Box({
+            className: 'spacing-v-15',
+            children: [
                 SideModule([System()]),
             ]
         }),
-        endWidget: Indicators(),
+        endWidget: Indicators()
     });
+
     const focusedBarContent = Widget.CenterBox({
         className: 'bar-bg-focus',
-        startWidget: Widget.Box({}),
-        centerWidget: Widget.Box({
-            className: 'spacing-h-4',
+        startWidget: Widget.Box({
             children: [
-                SideModule([]),
+                await WindowTitle(monitor),
+                Spacer(),
                 Widget.Box({
                     homogeneous: true,
                     children: [await FocusOptionalWorkspaces()],
                 }),
+            ],
+        }),
+        centerWidget: Widget.Box({
+            className: 'spacing-h-4',
+            children: [
                 SideModule([]),
             ]
         }),

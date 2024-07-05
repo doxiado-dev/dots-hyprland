@@ -25,25 +25,25 @@ let configOptions = {
             'from': "18:10",
             'to': "6:10",
         },
-        'keyboardUseFlag': false, // Use flag emoji instead of abbreviation letters
+        'keyboardUseFlag': true, // Use flag emoji instead of abbreviation letters
         'layerSmoke': false,
         'layerSmokeStrength': 0.2,
-        'fakeScreenRounding': 1, // 0: None | 1: Always | 2: When not fullscreen
+        'fakeScreenRounding': 2, // 0: None | 1: Always | 2: When not fullscreen
     },
     'apps': {
         'bluetooth': "blueberry",
         'imageViewer': "loupe",
         'network': "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center wifi",
         'settings': "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center",
-        'taskManager': "gnome-usage",
+        'taskManager': "gnome-system-monitor",
         'terminal': "foot", // This is only for shell actions
     },
     'battery': {
         'low': 20,
         'critical': 10,
-        'warnLevels': [20, 15, 5],
+        'warnLevels': [20, 10, 5],
         'warnTitles': ["Low battery", "Very low battery", 'Critical Battery'],
-        'warnMessages': ["Plug in the charger", "You there?", 'PLUG THE CHARGER ALREADY'],
+        'warnMessages': ["Plug in the charger", "Just Plug in the charger.", 'PLUG THE CHARGER ALREADY'],
         'suspendThreshold': 3,
     },
     'brightness': {
@@ -118,16 +118,16 @@ let configOptions = {
             'aiSearch': true,
             'webSearch': true,
         },
-        'engineBaseUrl': "https://www.google.com/search?q=",
+        'engineBaseUrl': "https://duckduckgo.com/?q=",
         'excludedSites': ["quora.com"],
     },
     'time': {
         // See https://docs.gtk.org/glib/method.DateTime.format.html
         // Here's the 12h format: "%I:%M%P"
         // For seconds, add "%S" and set interval to 1000
-        'format': "%H:%M",
+        'format': "%I:%M %p",
         'interval': 5000,
-        'dateFormatLong': "%A, %d/%m", // On bar
+        'dateFormatLong': "%b%e", // On bar
         'dateInterval': 5000,
         'dateFormat': "%d/%m", // On notif time
     },
@@ -136,12 +136,12 @@ let configOptions = {
         'preferredUnit': "C", // Either C or F
     },
     'workspaces': {
-        'shown': 10,
+        'shown': 6,
     },
     'dock': {
-        'enabled': false,
+        'enabled': true,
         'hiddenThickness': 5,
-        'pinnedApps': ['firefox', 'org.gnome.Nautilus'],
+        'pinnedApps': ['org.gnome.Nautilus', 'librewolf'],
         'layer': 'top',
         'monitorExclusivity': true, // Dock will move to other monitor along with focus if enabled
         'searchPinnedAppIcons': false, // Try to search for the correct icon if the app class isn't an icon name
