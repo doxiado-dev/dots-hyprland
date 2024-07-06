@@ -109,6 +109,8 @@ metapkgs+=(./arch-packages/illogical-impulse-ags)
 metapkgs+=(./apple_cursor)
 metapkgs+=(./arch-packages/illogical-impulse-microtex-git)
 metapkgs+=(./arch-packages/illogical-impulse-oneui4-icons-git)
+[[ -f /usr/share/icons/macOS-Monterey/index.theme ]] || \
+  metapkgs+=(./arch-packages/apple_cursor)
 try sudo pacman -R illogical-impulse-microtex
 
 for i in "${metapkgs[@]}"; do
