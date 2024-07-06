@@ -109,8 +109,6 @@ metapkgs+=(./arch-packages/illogical-impulse-ags)
 metapkgs+=(./apple_cursor)
 metapkgs+=(./arch-packages/illogical-impulse-microtex-git)
 metapkgs+=(./arch-packages/illogical-impulse-oneui4-icons-git)
-[[ -f /usr/share/icons/Bibata-Modern-Classic/index.theme ]] || \
-  metapkgs+=(./arch-packages/illogical-impulse-bibata-modern-classic-bin)
 try sudo pacman -R illogical-impulse-microtex
 
 for i in "${metapkgs[@]}"; do
@@ -274,7 +272,7 @@ warn_files_tests+=(/usr/local/share/licenses/ttf-rubik)
 warn_files_tests+=(/usr/local/share/fonts/TTF/Gabarito-{Black,Bold,ExtraBold,Medium,Regular,SemiBold}.ttf)
 warn_files_tests+=(/usr/local/share/licenses/ttf-gabarito)
 warn_files_tests+=(/usr/local/share/icons/OneUI{,-dark,-light})
-warn_files_tests+=(/usr/local/share/icons/Bibata-Modern-Classic)
+warn_files_tests+=(/usr/local/share/icons/macOS-Monterey)
 warn_files_tests+=(/usr/local/bin/{LaTeX,res})
 for i in ${warn_files_tests[@]}; do
   echo $i
