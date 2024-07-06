@@ -169,6 +169,8 @@ v bash -c "echo i2c-dev | sudo tee /etc/modules-load.d/i2c-dev.conf"
 v systemctl --user enable ydotool --now
 v gsettings set org.gnome.desktop.interface font-name 'Rubik 11'
 
+# this is needed for the dock use that cursor
+v gsettings set org.gnome.desktop.interface cursor-theme macOS-Monterey
 #####################################################################################
 printf "\e[36m[$0]: 2. Installing parts from source repo\e[0m\n"
 sleep 1
