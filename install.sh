@@ -106,7 +106,6 @@ install-local-pkgbuild() {
 # Install core dependencies from the meta-packages
 metapkgs=(./arch-packages/illogical-impulse-{audio,backlight,basic,fonts-themes,gnome,gtk,portal,python,screencapture,widgets})
 metapkgs+=(./arch-packages/illogical-impulse-ags)
-metapkgs+=(./apple_cursor)
 metapkgs+=(./arch-packages/illogical-impulse-microtex-git)
 metapkgs+=(./arch-packages/illogical-impulse-oneui4-icons-git)
 [[ -f /usr/share/icons/macOS-Monterey/index.theme ]] || \
