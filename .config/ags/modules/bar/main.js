@@ -2,7 +2,6 @@ const { Gtk } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import Battery from 'resource:///com/github/Aylur/ags/service/battery.js';
 
-import WindowTitle from "./normal/spaceleft.js";
 import Indicators from "./normal/spaceright.js";
 import Music from "./normal/music.js";
 import System from "./normal/system.js";
@@ -40,9 +39,6 @@ export const Bar = async (monitor = 0) => {
         children: children,
         margin_end: margin,
     });
-    const Spacer = () => Widget.Box({
-        className: 'spacer',
-    });
 
     const normalBarContent = Widget.CenterBox({
         className: 'bar-bg',
@@ -53,19 +49,22 @@ export const Bar = async (monitor = 0) => {
         },
         startWidget: Widget.Box({
             children: [
-                await WindowTitle(monitor),
-                Spacer(),
                 Widget.Box({
-                    homogeneous: true,
-                    children: [await NormalOptionalWorkspaces()],
+                    className: 'spacing-h-4', // Added space before workspaces
+                    children: [
+                        Widget.Box({
+                            homogeneous: true,
+                            children: [await NormalOptionalWorkspaces()],
+                        }),
+                    ],
                 }),
-                SideModule([Music()], 15), // Added margin of 15 after Music widget
+                SideModule([Music()]),
             ],
         }),
         centerWidget: Widget.Box({
             className: 'spacing-v-15',
             children: [
-                SideModule([System()]),
+                System(),
             ]
         }),
         endWidget: Indicators()
@@ -75,11 +74,14 @@ export const Bar = async (monitor = 0) => {
         className: 'bar-bg-focus',
         startWidget: Widget.Box({
             children: [
-                await WindowTitle(monitor),
-                Spacer(),
                 Widget.Box({
-                    homogeneous: true,
-                    children: [await FocusOptionalWorkspaces()],
+                    className: 'spacing-h-4', // Added space before workspaces
+                    children: [
+                        Widget.Box({
+                            homogeneous: true,
+                            children: [await FocusOptionalWorkspaces()],
+                        }),
+                    ],
                 }),
             ],
         }),
@@ -97,9 +99,11 @@ export const Bar = async (monitor = 0) => {
             })
         }
     });
+
     const nothingContent = Widget.Box({
         className: 'bar-bg-nothing',
-    })
+    });
+
     return Widget.Window({
         monitor,
         name: `bar${monitor}`,
@@ -117,7 +121,6 @@ export const Bar = async (monitor = 0) => {
             },
             setup: (self) => self.hook(currentShellMode, (self) => {
                 self.shown = currentShellMode.value;
-
             })
         }),
     });

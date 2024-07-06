@@ -319,7 +319,7 @@ export const StatusIcons = (props = {}) => Widget.Box({
                 ]
             }),
             Utilities(),
-            BarBattery(), // Add BarBattery to StatusIcons
+            BarBattery(),
         ]
     })
 });

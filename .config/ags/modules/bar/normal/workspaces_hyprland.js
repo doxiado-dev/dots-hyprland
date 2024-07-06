@@ -158,11 +158,16 @@ export default () => EventBox({
     child: Box({
         homogeneous: true,
         className: 'bar-group-margin',
-        children: [Box({
-            className: 'bar-group bar-group-standalone bar-group-pad',
-            css: 'min-width: 2px;',
-            children: [WorkspaceContents(userOptions.workspaces.shown)],
-        })]
+        children: [
+            Box({
+                className: 'bar-group bar-group-standalone bar-group-pad',
+                css: 'min-width: 2px;',
+                //i dont like rem
+                children: [
+                    Box({ css: 'min-width: 25px;' }),
+                    WorkspaceContents(userOptions.workspaces.shown),                ],
+            })
+        ]
     }),
     setup: (self) => {
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK);
