@@ -107,6 +107,7 @@ install-local-pkgbuild() {
 metapkgs=(./arch-packages/illogical-impulse-{audio,backlight,basic,fonts-themes,gnome,gtk,portal,python,screencapture,widgets})
 metapkgs+=(./arch-packages/illogical-impulse-ags)
 metapkgs+=(./arch-packages/illogical-impulse-microtex-git)
+metapkgs+=(./arch-packages/flameshot-git)
 metapkgs+=(./arch-packages/illogical-impulse-oneui4-icons-git)
 [[ -f /usr/share/icons/macOS-Monterey/index.theme ]] || \
   metapkgs+=(./arch-packages/apple_cursor)
@@ -290,10 +291,15 @@ printf "\e[36mIf you are new to Hyprland, please read\n"
 printf "https://end-4.github.io/dots-hyprland-wiki/en/i-i/01setup/#post-installation\n"
 printf "for hints on launching Hyprland.\e[0m\n"
 printf "\n"
+printf "\e[1;34mPlease update files:\n"
+printf "\e[0m"
+printf "\e[30m\e[46m ~/.config/ags/scripts/e-zsnip.sh \e[0m\n"
+printf "\e[30m\e[46m ~/.config/ags/scripts/e-zfull.sh \e[0m\n"
+printf "\e[1;34mwith your e-z.host API KEY for Screenshots uploading to work.\e[0m\n"
+printf "\n"
 printf "\e[36mIf you are already running Hyprland,\e[0m\n"
 printf "\e[36mPress \e[30m\e[46m Ctrl+Super+T \e[0m\e[36m to select a wallpaper\e[0m\n"
-printf "\e[36mPress \e[30m\e[46m Super+/ \e[0m\e[36m for a list of keybinds\e[0m\n"
-printf "\n"
+printf "\e[36mPress \e[30m\e[46m Super+H \e[0m\e[36m for a list of keybinds\e[0m\n"
 
 case $existed_ags_opt in
   y) printf "\n\e[33m[$0]: Warning: \"$XDG_CONFIG_HOME/ags/user_options.js\" already existed before and we didn't overwrite it. \e[0m\n"

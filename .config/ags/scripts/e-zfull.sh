@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+# Go to https://e-z.gg/dash/account
+## Make sure you're log in and Copy the API KEY and put it below this.
 auth=""
 url="https://api.e-z.host/files"
 
