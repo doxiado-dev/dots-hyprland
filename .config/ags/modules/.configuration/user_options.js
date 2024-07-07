@@ -41,7 +41,7 @@ let configOptions = {
     'battery': {
         'low': 20,
         'critical': 10,
-        'warnLevels': [20, 10, 5],
+        'warnLevels': [20, 10, 8],
         'warnTitles': ["Low battery", "Very low battery", 'Critical Battery'],
         'warnMessages': ["Plug in the charger", "Just Plug in the charger.", 'PLUG THE CHARGER ALREADY'],
         'suspendThreshold': 3,
