@@ -63,8 +63,8 @@ let configOptions = {
     },
     'gaming': {
         'crosshair': {
-            'size': 20,
-            'color': 'rgba(113,227,32,0.9)',
+            'size': 10,
+            'color': 'rgba(109,134,153,1)',
         },
     },
     'monitors': {
