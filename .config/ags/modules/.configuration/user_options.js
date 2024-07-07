@@ -41,10 +41,10 @@ let configOptions = {
     'battery': {
         'low': 20,
         'critical': 10,
-        'warnLevels': [20, 10, 8],
+        'warnLevels': [20, 10, 5],
         'warnTitles': ["Low battery", "Very low battery", 'Critical Battery'],
-        'warnMessages': ["Plug in the charger", "Just Plug in the charger.", 'PLUG THE CHARGER ALREADY'],
-        'suspendThreshold': 3,
+        'warnMessages': ["Plug in the charger", "Please plug in the charger.", 'PLUG THE CHARGER ALREADY'],
+        'suspendThreshold': 2,
     },
     'brightness': {
         // Object of controller names for each monitor, either "brightnessctl" or "ddcutil" or "auto"
