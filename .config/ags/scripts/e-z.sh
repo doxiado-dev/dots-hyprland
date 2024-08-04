@@ -50,7 +50,7 @@ if [[ "$success" != "true" ]] || [[ "$success" == "null" ]]; then
     fi
 fi
 
-cat /tmp/upload.json | jq -r ".imageUrl" | xclip -sel c
+cat /tmp/upload.json | jq -r ".imageUrl" | wl-copy
 notify-send "Image URL copied to clipboard" -a "Flameshot" -i $temp_file
 rm $temp_file
 fi
