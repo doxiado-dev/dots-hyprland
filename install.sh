@@ -98,7 +98,6 @@ install-local-pkgbuild() {
 
     source PKGBUILD
 
-    echo "Installing package"
     yay -S $installflags --asdeps "${depends[@]}" || { echo "Failed to install package"; popd > /dev/null; return 1; }
     makepkg -si --noconfirm || { echo "Failed to build package"; popd > /dev/null; return 1; }
 
