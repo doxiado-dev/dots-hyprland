@@ -13,5 +13,5 @@ install-ags
 install-Rubik
 install-Gabarito
 install-OneUI
-install-bibata
+install-Cursor
 install-MicroTeX

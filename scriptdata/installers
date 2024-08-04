@@ -83,13 +83,13 @@ install-OneUI (){
 }
 
 # Not for Arch(based) distro.
-install-bibata (){
-  x mkdir -p $base/cache/bibata-cursor
-  x cd $base/cache/bibata-cursor
-  name="macOS-Monterey"
+install-Cursor (){
+  x mkdir -p $base/cache/macOS-Monterey
+  x cd $base/cache/macOS-Monterey
+  name="macOS"
   file="$name.tar.gz"
   # Use axel because `curl -O` always downloads a file with 0 byte size, idk why
-  x axel https://github.com/ful1e5/apple_cursor/releases/tag/v2.0.0/download/$file
+  x axel https://github.com/ful1e5/apple_cursor/releases/tag/v2.0.1/download/$file
   tar -xf $file
   x sudo mkdir -p /usr/local/share/icons
   x sudo cp -r $name /usr/local/share/icons
