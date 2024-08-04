@@ -91,16 +91,18 @@ v set-explicit-to-implicit
 # https://github.com/end-4/dots-hyprland/issues/581
 # yay -Bi is kinda hit or miss, instead cd into the relevant directory and manually source and install deps
 install-local-pkgbuild() {
-	local location=$1
-	local installflags=$2
+    local location=$1
+    local installflags=$2
 
-	x pushd $location
+    pushd "$location" > /dev/null || { echo "Failed to change directory to $location"; exit 1; }
 
-	source ./PKGBUILD
-	x yay -S $installflags --asdeps "${depends[@]}"
-	x makepkg -si --noconfirm
+    source PKGBUILD
 
-	x popd
+    echo "Installing package"
+    yay -S $installflags --asdeps "${depends[@]}" || { echo "Failed to install package"; popd > /dev/null; return 1; }
+    makepkg -si --noconfirm || { echo "Failed to build package"; popd > /dev/null; return 1; }
+
+    popd > /dev/null
 }
 
 # Install core dependencies from the meta-packages
