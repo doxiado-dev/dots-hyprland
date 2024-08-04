@@ -6,7 +6,17 @@ auth=""
 url="https://api.e-z.host/files"
 
 temp_file="/tmp/screenshot.png"
- XDG_CURRENT_DESKTOP=GNOME flameshot gui -r > $temp_file
+config_file="$HOME/.config/flameshot/flameshot.ini"
+
+if ! grep -q "disabledGrimWarning=true" "$config_file"; then
+    echo "disabledGrimWarning=true" >> "$config_file"
+fi
+
+if [[ "$1" == "--full" ]]; then
+        XDG_CURRENT_DESKTOP=SWAY flameshot screen -r > $temp_file
+    else
+        XDG_CURRENT_DESKTOP=SWAY flameshot gui -r > $temp_file
+        fi
 
 if [[ $(file --mime-type -b $temp_file) != "image/png" ]]; then
     rm $temp_file
@@ -43,4 +53,4 @@ fi
 cat /tmp/upload.json | jq -r ".imageUrl" | xclip -sel c
 notify-send "Image URL copied to clipboard" -a "Flameshot" -i $temp_file
 rm $temp_file
-
+fi
