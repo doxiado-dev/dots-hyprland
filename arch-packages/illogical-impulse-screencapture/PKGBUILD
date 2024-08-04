@@ -7,9 +7,9 @@ license=(None)
 depends=(
 	swappy
 	wf-recorder
+	wlr-randr
 	grim
 	tesseract
 	tesseract-data-eng
 	slurp
 )
-
