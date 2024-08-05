@@ -206,7 +206,7 @@ export default async (monitor = 0) => {
                     },
                     child: Box({
                         className: 'bar-group bar-group-standalone bar-group-pad',
-                        css: 'min-width: 2px;',
+                        css: 'min-width: 30px;',
                         children: [
                             Box({ css: 'min-width: 30px;' }),
                             WorkspaceContents(userOptions.workspaces.shown),
