@@ -7,7 +7,9 @@ import App from 'resource:///com/github/Aylur/ags/app.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js'
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 const { Box, DrawingArea, EventBox } = Widget;
+import Brightness from '../../../services/brightness.js';
 import Hyprland from 'resource:///com/github/Aylur/ags/service/hyprland.js';
+import Indicator from '../../../services/indicator.js';
 
 const dummyWs = Box({ className: 'bar-ws' }); // Not shown. Only for getting size props
 const dummyActiveWs = Box({ className: 'bar-ws bar-ws-active' }); // Not shown. Only for getting size props
@@ -146,52 +148,73 @@ const WorkspaceContents = (count = 10) => {
     })
 }
 
-export default () => EventBox({
-    onScrollUp: () => Hyprland.messageAsync(`dispatch workspace -1`).catch(print),
-    onScrollDown: () => Hyprland.messageAsync(`dispatch workspace +1`).catch(print),
-    onMiddleClick: () => toggleWindowOnAllMonitors('osk'),
-    onSecondaryClick: () => App.toggleWindow('overview'),
-    attribute: {
-        clicked: false,
-        ws_group: 0,
-    },
-    child: Box({
-        homogeneous: true,
-        className: 'bar-group-margin',
-        children: [
-            Box({
-                className: 'bar-group bar-group-standalone bar-group-pad',
-                css: 'min-width: 2px;',
-                //i dont like rem
-                children: [
-                    Box({ css: 'min-width: 25px;' }),
-                    WorkspaceContents(userOptions.workspaces.shown),                ],
-            })
-        ]
-    }),
-    setup: (self) => {
-        self.add_events(Gdk.EventMask.POINTER_MOTION_MASK);
-        self.on('motion-notify-event', (self, event) => {
-            if (!self.attribute.clicked) return;
-            const [_, cursorX, cursorY] = event.get_coords();
-            const widgetWidth = self.get_allocation().width;
-            const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-            Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
-                .catch(print);
-        })
-        self.on('button-press-event', (self, event) => {
-            if (event.get_button()[1] === 1) {
-                self.attribute.clicked = true;
+export default async (monitor = 0) => {
+    return EventBox({
+        onScrollUp: () => {
+            Indicator.popup(1); // Since the brightness and speaker are both on the same window
+            Brightness[monitor].screen_value += 0.05;
+        },
+        onScrollDown: () => {
+            Indicator.popup(1); // Since the brightness and speaker are both on the same window
+            Brightness[monitor].screen_value -= 0.05;
+        },
+        onMiddleClick: () => toggleWindowOnAllMonitors('osk'),
+        onSecondaryClick: () => App.toggleWindow('overview'),
+        attribute: {
+            clicked: false,
+            ws_group: 0,
+        },
+        child: Box({
+            homogeneous: true,
+            className: 'bar-group-margin',
+            children: [
+                EventBox({
+                    onScrollUp: (self, event) => {
+                        Indicator.popup(1); // Since the brightness and speaker are both on the same window
+                        Brightness[monitor].screen_value += 0.05;
+                    },
+                    onScrollDown: (self, event) => {
+                        Indicator.popup(1); // Since the brightness and speaker are both on the same window
+                        Brightness[monitor].screen_value -= 0.05;
+                    },
+                    onPrimaryClick: () => {
+                        App.toggleWindow('sideleft');
+                    },
+                    child: Box({
+                        className: 'bar-group bar-group-standalone bar-group-pad',
+                        css: 'min-width: 2px;',
+                        children: [
+                            Box({ css: 'min-width: 30px;' }),
+                            WorkspaceContents(userOptions.workspaces.shown),
+                        ],
+                    }),
+                })
+            ]
+        }),
+        setup: (self) => {
+            self.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.SCROLL_MASK); // Add scroll mask
+            self.on('motion-notify-event', (self, event) => {
+                if (!self.attribute.clicked) return;
                 const [_, cursorX, cursorY] = event.get_coords();
                 const widgetWidth = self.get_allocation().width;
                 const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
                 Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
                     .catch(print);
-            }
-            else if (event.get_button()[1] === 8) {
-                Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
-            }
-        })
-        self.on('button-release-event', (self) => self.attribute.clicked = false);
-    }
-})
+            })
+            self.on('button-press-event', (self, event) => {
+                if (event.get_button()[1] === 1) {
+                    self.attribute.clicked = true;
+                    const [_, cursorX, cursorY] = event.get_coords();
+                    const widgetWidth = self.get_allocation().width;
+                    const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
+                    Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
+                        .catch(print);
+                }
+                else if (event.get_button()[1] === 8) {
+                    Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
+                }
+            })
+            self.on('button-release-event', (self) => self.attribute.clicked = false);
+        }
+    });
+}
