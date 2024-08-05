@@ -47,7 +47,10 @@ const WorkspaceContents = (count = 10) => {
         },
         setup: (area) => area
             .hook(Hyprland.active.workspace, (self) => {
-                self.setCss(`font-size: ${(Hyprland.active.workspace.id - 1) % count + 1}px;`);
+                const newActiveWs = (Hyprland.active.workspace.id - 1) % count + 1;
+                self.setCss(`font-size: ${newActiveWs}px;`);
+                self.attribute.lastImmediateActiveWs = self.attribute.immediateActiveWs;
+                self.attribute.immediateActiveWs = newActiveWs;
                 const previousGroup = self.attribute.workspaceGroup;
                 const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / count);
                 if (currentGroup !== previousGroup) {
@@ -150,28 +153,8 @@ const WorkspaceContents = (count = 10) => {
 
 export default async (monitor = 0) => {
     return EventBox({
-        onScrollUp: (self, event) => {
-            const [_, cursorX, cursorY] = event.get_coords();
-            const widgetWidth = self.get_allocation().width;
-            const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-            if (cursorX < 30) { // Assuming 30px is the width of the spacer
-                Indicator.popup(1);
-                Brightness[monitor].screen_value += 0.05;
-            } else {
-                Hyprland.messageAsync(`dispatch workspace -1`).catch(print);
-            }
-        },
-        onScrollDown: (self, event) => {
-            const [_, cursorX, cursorY] = event.get_coords();
-            const widgetWidth = self.get_allocation().width;
-            const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-            if (cursorX < 30) { // Assuming 30px is the width of the spacer
-                Indicator.popup(1);
-                Brightness[monitor].screen_value -= 0.05;
-            } else {
-                Hyprland.messageAsync(`dispatch workspace +1`).catch(print);
-            }
-        },
+        onScrollUp: (self, event) => handleScroll(self, event, monitor, 'up'),
+        onScrollDown: (self, event) => handleScroll(self, event, monitor, 'down'),
         onMiddleClick: () => toggleWindowOnAllMonitors('osk'),
         onSecondaryClick: () => App.toggleWindow('overview'),
         attribute: {
@@ -183,27 +166,9 @@ export default async (monitor = 0) => {
             className: 'bar-group-margin',
             children: [
                 EventBox({
-                    onScrollUp: (self, event) => {
-                        const [_, cursorX, cursorY] = event.get_coords();
-                        if (cursorX < 30) { // Assuming 30px is the width of the spacer
-                            Indicator.popup(1);
-                            Brightness[monitor].screen_value += 0.05;
-                        } else {
-                            Hyprland.messageAsync(`dispatch workspace -1`).catch(print);
-                        }
-                    },
-                    onScrollDown: (self, event) => {
-                        const [_, cursorX, cursorY] = event.get_coords();
-                        if (cursorX < 30) { // Assuming 30px is the width of the spacer
-                            Indicator.popup(1);
-                            Brightness[monitor].screen_value -= 0.05;
-                        } else {
-                            Hyprland.messageAsync(`dispatch workspace +1`).catch(print);
-                        }
-                    },
-                    onPrimaryClick: () => {
-                        App.toggleWindow('sideleft');
-                    },
+                    onScrollUp: (self, event) => handleScroll(self, event, monitor, 'up'),
+                    onScrollDown: (self, event) => handleScroll(self, event, monitor, 'down'),
+                    onPrimaryClick: (self, event) => handlePrimaryClick(self, event),
                     child: Box({
                         className: 'bar-group bar-group-standalone bar-group-pad',
                         css: 'min-width: 30px;',
@@ -216,28 +181,50 @@ export default async (monitor = 0) => {
             ]
         }),
         setup: (self) => {
-            self.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.SCROLL_MASK);
-            self.on('motion-notify-event', (self, event) => {
-                if (!self.attribute.clicked) return;
-                const [_, cursorX, cursorY] = event.get_coords();
-                const widgetWidth = self.get_allocation().width;
-                const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-                Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
-                    .catch(print);
-            });
-            self.on('button-press-event', (self, event) => {
-                if (event.get_button()[1] === 1) {
-                    self.attribute.clicked = true;
-                    const [_, cursorX, cursorY] = event.get_coords();
-                    const widgetWidth = self.get_allocation().width;
-                    const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-                    Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
-                        .catch(print);
-                } else if (event.get_button()[1] === 8) {
-                    Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
-                }
-            });
+            self.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
+            self.on('motion-notify-event', (self, event) => handleMotionNotify(self, event));
+            self.on('button-press-event', (self, event) => handleButtonPress(self, event));
             self.on('button-release-event', (self) => self.attribute.clicked = false);
         }
     });
+}
+
+function handleScroll(self, event, monitor, direction) {
+    const [_, cursorX] = event.get_coords();
+    const widgetWidth = self.get_allocation().width;
+    if (cursorX < 30) {
+        Indicator.popup(1);
+        Brightness[monitor].screen_value += (direction === 'up' ? 0.05 : -0.05);
+    } else {
+        Hyprland.messageAsync(`dispatch workspace ${direction === 'up' ? '-1' : '+1'}`).catch(print);
+    }
+}
+
+function handlePrimaryClick(self, event) {
+    const [_, cursorX] = event.get_coords();
+    if (cursorX < 30) {
+        App.toggleWindow('sideleft');
+    }
+}
+
+function handleMotionNotify(self, event) {
+    if (!self.attribute.clicked) return;
+    const [_, cursorX] = event.get_coords();
+    const widgetWidth = self.get_allocation().width;
+    const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
+    Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
+        .catch(print);
+}
+
+function handleButtonPress(self, event) {
+    if (event.get_button()[1] === 1) {
+        self.attribute.clicked = true;
+        const [_, cursorX] = event.get_coords();
+        const widgetWidth = self.get_allocation().width;
+        const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
+        Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
+            .catch(print);
+    } else if (event.get_button()[1] === 8) {
+        Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
+    }
 }
