@@ -156,17 +156,16 @@ export default async (monitor = 0) => {
         onScrollUp: (self, event) => handleScroll(self, event, monitor, 'up'),
         onScrollDown: (self, event) => handleScroll(self, event, monitor, 'down'),
         onMiddleClick: () => {
-            console.log('EventBox: Middle click detected');
             toggleWindowOnAllMonitors('osk');
         },
         onSecondaryClick: () => {
-            console.log('EventBox: Secondary click detected');
             App.toggleWindow('overview');
         },
         attribute: {
             clicked: false,
             ws_group: 0,
         },
+        // Spacer
         child: Box({
             homogeneous: true,
             className: 'bar-group-margin',
@@ -191,10 +190,8 @@ export default async (monitor = 0) => {
             self.on('motion-notify-event', (self, event) => handleMotionNotify(self, event));
             self.on('button-press-event', (self, event) => handleButtonPress(self, event));
             self.on('button-release-event', (self) => {
-                console.log('EventBox: Button released');
                 self.attribute.clicked = false;
             });
-            console.log('EventBox: Setup complete, width:', self.get_allocation().width);
         }
     });
 }
@@ -202,13 +199,10 @@ export default async (monitor = 0) => {
 function handleScroll(self, event, monitor, direction) {
     const [_, cursorX] = event.get_coords();
     const widgetWidth = self.get_allocation().width;
-    console.log(`handleScroll: cursorX=${cursorX}, widgetWidth=${widgetWidth}, direction=${direction}`);
     if (cursorX < 25) {
-        console.log('handleScroll: Adjusting brightness');
         Indicator.popup(1);
         Brightness[monitor].screen_value += (direction === 'up' ? 0.05 : -0.05);
     } else if (cursorX >= 25 && cursorX <= widgetWidth - 25) {
-        console.log('handleScroll: Dispatching workspace change');
         Hyprland.messageAsync(`dispatch workspace ${direction === 'up' ? '-1' : '+1'}`).catch(print);
     }
 }
@@ -216,12 +210,8 @@ function handleScroll(self, event, monitor, direction) {
 function handlePrimaryClick(self, event) {
     const [_, cursorX] = event.get_coords();
     const widgetWidth = self.get_allocation().width;
-    console.log(`handlePrimaryClick: cursorX=${cursorX}, widgetWidth=${widgetWidth}`);
     if (cursorX < 25) {
-        console.log('handlePrimaryClick: Toggling sideleft window');
         App.toggleWindow('sideleft');
-    } else {
-        console.log('handlePrimaryClick: No action for cursorX >= 25');
     }
 }
 
@@ -229,10 +219,8 @@ function handleMotionNotify(self, event) {
     if (!self.attribute.clicked) return;
     const [_, cursorX] = event.get_coords();
     const widgetWidth = self.get_allocation().width;
-    console.log(`handleMotionNotify: cursorX=${cursorX}, widgetWidth=${widgetWidth}`);
     if (cursorX >= 25 && cursorX <= widgetWidth - 25) {
         const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-        console.log(`handleMotionNotify: Dispatching workspace action for wsId=${wsId}`);
         Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
             .catch(print);
     }
@@ -242,16 +230,13 @@ function handleButtonPress(self, event) {
     const button = event.get_button()[1];
     const [_, cursorX] = event.get_coords();
     const widgetWidth = self.get_allocation().width;
-    console.log(`handleButtonPress: button=${button}, cursorX=${cursorX}, widgetWidth=${widgetWidth}`);
     if (button === 1) {
         self.attribute.clicked = true;
         if (cursorX >= 25 && cursorX <= widgetWidth - 25) {
             const wsId = Math.ceil(cursorX * userOptions.workspaces.shown / widgetWidth);
-            console.log(`handleButtonPress: Dispatching workspace action for wsId=${wsId}`);
             Utils.execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, 'workspace', `${wsId}`])
                 .catch(print);
         } else if (button === 1) {
-            console.log('handleButtonPress: Toggling special workspace');
             Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
         }
     }

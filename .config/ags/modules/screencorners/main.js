@@ -35,4 +35,3 @@ export default (monitor = 0, where = 'bottom left', useOverlayLayer = true) => {
         setup: enableClickthrough,
     });
 }
-
