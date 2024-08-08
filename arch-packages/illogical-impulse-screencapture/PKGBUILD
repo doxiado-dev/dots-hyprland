@@ -9,7 +9,7 @@ depends=(
 	wf-recorder
 	wlr-randr
 	grim
-	tesseract
-	tesseract-data-eng
+	e-z-recorder
+	flameshot-git
 	slurp
 )

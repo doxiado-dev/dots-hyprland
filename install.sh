@@ -107,12 +107,8 @@ install-local-pkgbuild() {
 # Install core dependencies from the meta-packages
 metapkgs=(./arch-packages/illogical-impulse-{audio,backlight,basic,fonts-themes,gnome,gtk,portal,python,screencapture,widgets})
 metapkgs+=(./arch-packages/illogical-impulse-ags)
-metapkgs+=(./arch-packages/flameshot-git)
-metapkgs+=(./arch-packages/e-z-recorder)
 metapkgs+=(./arch-packages/illogical-impulse-microtex-git)
 metapkgs+=(./arch-packages/illogical-impulse-oneui4-icons-git)
-[[ -f /usr/share/icons/macOS/index.theme ]] || \
-  metapkgs+=(./arch-packages/apple_cursor)
 try sudo pacman -R illogical-impulse-microtex
 
 for i in "${metapkgs[@]}"; do
@@ -254,7 +250,7 @@ esac
 # some foldes (eg. .local/bin) should be processed separately to avoid `--delete' for rsync,
 # since the files here come from different places, not only about one program.
 v rsync -av ".local/bin/" "$XDG_BIN_HOME"
-v rsync -av ".Xresources" "$XDG_CONFIG_HOME"
+v rsync -av ".Xresources" "$HOME"
 
 # Dark mode & Enable Cursor by default
 v gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
