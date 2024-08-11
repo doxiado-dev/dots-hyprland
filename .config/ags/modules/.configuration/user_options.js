@@ -29,7 +29,7 @@ let configOptions = {
     keyboardUseFlag: true, // Use flag emoji instead of abbreviation letters
     layerSmoke: false,
     layerSmokeStrength: 0.2,
-    
+
     // Changing this to 2 will break the sidemodule/brightness position, will be fixed sometime in the future.
     fakeScreenRounding: 1, // 0: None | 1: Always | 2: When not fullscreen
   },
@@ -44,14 +44,14 @@ let configOptions = {
   battery: {
     low: 20,
     critical: 10,
-    warnLevels: [20, 10, 5],
+    warnLevels: [20, 15, 10],
     warnTitles: ["Low battery", "Very low battery", "Critical Battery"],
     warnMessages: [
       "Plug in the charger",
       "Please plug in the charger.",
       "PLUG THE CHARGER ALREADY",
     ],
-    suspendThreshold: 2,
+    suspendThreshold: 5,
   },
   brightness: {
     // Object of controller names for each monitor, either "brightnessctl" or "ddcutil" or "auto"
