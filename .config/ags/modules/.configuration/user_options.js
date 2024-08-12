@@ -127,7 +127,7 @@ let configOptions = {
       webSearch: true,
     },
     engineBaseUrl: "https://duckduckgo.com/?q=",
-    excludedSites: ["quora.com"],
+    excludedSites: [""],
   },
   time: {
     // See https://docs.gtk.org/glib/method.DateTime.format.html
