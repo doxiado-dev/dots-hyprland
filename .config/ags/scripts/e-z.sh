@@ -8,6 +8,18 @@ url="https://api.e-z.host/files"
 temp_file="/tmp/screenshot.png"
 config_file="$HOME/.config/flameshot/flameshot.ini"
 
+if [[ -z "$auth" ]]; then
+    echo "API Key is not set."
+    echo "Edit the script on $HOME/.config/ags/scripts/e-z.sh to add your E-Z API KEY on the auth variable."
+    notify-send "API Key is not added." 'Edit the script to add your E-Z API KEY.'
+    exit 1
+fi
+
+if [ ! -f "$config_file" ]; then
+    mkdir -p "$(dirname "$config_file")"
+    touch "$config_file"
+fi
+
 if ! grep -q "disabledGrimWarning=true" "$config_file"; then
     echo "disabledGrimWarning=true" >> "$config_file"
 fi
