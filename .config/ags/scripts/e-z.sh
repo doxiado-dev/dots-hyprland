@@ -25,10 +25,14 @@ if ! grep -q "disabledGrimWarning=true" "$config_file"; then
 fi
 
 if [[ "$1" == "--full" ]]; then
-        XDG_CURRENT_DESKTOP=SWAY flameshot screen -r > $temp_file
-    else
-        XDG_CURRENT_DESKTOP=SWAY flameshot gui -r > $temp_file
-        fi
+    flameshot screen -r > $temp_file
+else
+    flameshot gui -r > $temp_file &
+    sleep 0.2
+    hyprctl dispatch focuswindow flameshot
+    hyprctl dispatch fullscreenstate 3
+    wait
+fi
 
 if [[ $(file --mime-type -b $temp_file) != "image/png" ]]; then
     rm $temp_file
@@ -65,4 +69,3 @@ fi
 cat /tmp/upload.json | jq -r ".imageUrl" | wl-copy
 notify-send "Image URL copied to clipboard" -a "Flameshot" -i $temp_file
 rm $temp_file
-fi
