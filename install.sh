@@ -250,8 +250,6 @@ esac
 # some foldes (eg. .local/bin) should be processed separately to avoid `--delete' for rsync,
 # since the files here come from different places, not only about one program.
 v rsync -av ".local/bin/" "$XDG_BIN_HOME"
-v rsync -av ".Xresources" "$HOME"
-v xrdb -merge $HOME/.Xresources
 
 # Dark mode & Enable Cursor by default
 v gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'

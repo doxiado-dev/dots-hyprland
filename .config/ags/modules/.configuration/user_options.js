@@ -29,6 +29,7 @@ let configOptions = {
     keyboardUseFlag: true, // Use flag emoji instead of abbreviation letters
     layerSmoke: false,
     layerSmokeStrength: 0.2,
+    barRoundCorners: 1, // 0: No, 1: Yes
 
     // Changing this to 2 will break the sidemodule/brightness position, will be fixed sometime in the future.
     fakeScreenRounding: 1, // 0: None | 1: Always | 2: When not fullscreen
@@ -149,7 +150,7 @@ let configOptions = {
   dock: {
     enabled: true,
     hiddenThickness: 5,
-    pinnedApps: ["org.gnome.Nautilus", "librewolf"],
+    pinnedApps: ["org.gnome.Nautilus", "zen"],
     layer: "top",
     monitorExclusivity: true, // Dock will move to other monitor along with focus if enabled
     searchPinnedAppIcons: false, // Try to search for the correct icon if the app class isn't an icon name
@@ -187,6 +188,7 @@ let configOptions = {
       "pavucontrol-qt": "pavucontrol",
       wps: "wps-office2019-kprometheus",
       wpsoffice: "wps-office2019-kprometheus",
+      "zen-alpha": "zen-browser",
       "": "image-missing",
     },
     regexSubstitutions: [
@@ -195,6 +197,12 @@ let configOptions = {
         replace: "steam_icon_$1",
       },
     ],
+  },
+  bar: {
+    // Array of bar modes for each monitor. Hit Ctrl+Alt+Slash to cycle.
+    // Modes: "normal", "focus" (workspace indicator only), "nothing"
+    // Example for four monitors: ["normal", "focus", "normal", "nothing"]
+    monitors: ["normal"],
   },
   keybinds: {
     // Format: Mod1+Mod2+key. CaSe SeNsItIvE!

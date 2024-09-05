@@ -367,7 +367,40 @@ const OptionalKeyboardLayout = async () => {
     return null;
   }
 };
-const optionalKeyboardLayoutInstance = await OptionalKeyboardLayout();
+
+const createKeyboardLayoutInstances = async () => {
+  const Hyprland = (await import("resource:///com/github/Aylur/ags/service/hyprland.js")).default;
+  const monitorsCount = Hyprland.monitors.length;
+  const instances = await Promise.all(
+    Array.from({ length: monitorsCount }, () => OptionalKeyboardLayout())
+  );
+  return instances;
+};
+
+const optionalKeyboardLayoutInstances = await createKeyboardLayoutInstances();
+
+export const StatusIcons = (props = {}, monitor = 0) =>
+  Widget.Box({
+    ...props,
+    child: Widget.Box({
+      className: "spacing-h-15",
+      children: [
+        MicMuteIndicator(),
+        optionalKeyboardLayoutInstances[monitor],
+        NotificationIndicator(),
+        NetworkIndicator(),
+        Widget.Box({
+          className: "spacing-h-5",
+          children: [
+            BluetoothIndicator(true), // Pass true to indicate it's in the topbar
+            BluetoothDevices(), // Ensure BluetoothDevices is still shown
+          ],
+        }),
+        Utilities(),
+        BarBattery(),
+      ],
+    }),
+  });
 
 const UtilButton = ({ name, icon, onClicked }) =>
   Widget.Button({
@@ -391,29 +424,6 @@ const Utilities = () =>
         },
       }),
     ],
-  });
-
-export const StatusIcons = (props = {}) =>
-  Widget.Box({
-    ...props,
-    child: Widget.Box({
-      className: "spacing-h-15",
-      children: [
-        MicMuteIndicator(),
-        optionalKeyboardLayoutInstance,
-        NotificationIndicator(),
-        NetworkIndicator(),
-        Widget.Box({
-          className: "spacing-h-5",
-          children: [
-            BluetoothIndicator(true), // Pass true to indicate it's in the topbar
-            BluetoothDevices(), // Ensure BluetoothDevices is still shown
-          ],
-        }),
-        Utilities(),
-        BarBattery(),
-      ],
-    }),
   });
 
 const BarBattery = () =>
