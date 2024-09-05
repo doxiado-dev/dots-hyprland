@@ -379,6 +379,17 @@ const createKeyboardLayoutInstances = async () => {
 
 const optionalKeyboardLayoutInstances = await createKeyboardLayoutInstances();
 
+const BarGroup = ({ child }) =>
+  Widget.Box({
+    className: "bar-group-margin bar-sides",
+    children: [
+      Widget.Box({
+        className: "bar-group bar-group-standalone bar-group-pad-system",
+        children: [child],
+      }),
+    ],
+  });
+
 export const StatusIcons = (props = {}, monitor = 0) =>
   Widget.Box({
     ...props,
@@ -397,7 +408,7 @@ export const StatusIcons = (props = {}, monitor = 0) =>
           ],
         }),
         Utilities(),
-        BarBattery(),
+        BarGroup({ child: BarBattery() }),
       ],
     }),
   });
