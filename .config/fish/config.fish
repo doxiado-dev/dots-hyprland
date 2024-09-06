@@ -23,3 +23,4 @@ alias pamcan=pacman
 #   set_color cyan; echo (pwd)
 #   set_color green; echo '> '
 # end
+zoxide init --cmd cd fish | source
