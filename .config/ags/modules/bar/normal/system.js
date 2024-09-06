@@ -22,12 +22,12 @@ const BarClock = () =>
     children: [
       Widget.Label({
         className: "txt-smallie bar-date",
-        label: GLib.DateTime.new_now_utc().format(
+        label: GLib.DateTime.new_now_local().format(
           userOptions.time.dateFormatLong,
         ),
         setup: (self) =>
           self.poll(userOptions.time.dateInterval, (label) => {
-            label.label = GLib.DateTime.new_now_utc().format(
+            label.label = GLib.DateTime.new_now_local().format(
               userOptions.time.dateFormatLong,
             );
           }),
