@@ -306,14 +306,7 @@ const PinnedApps = () =>
 
 export default (monitor = 0) => {
   const dockContent = Box({
-    // TODO: Another method..
     className: "dock-bg spacing-h-5",
-    css: `
-            .dock-bg {
-                padding: 5px;
-                min-height: 40px;
-            }
-        `,
     children: [
       // PinButton(),
       PinnedApps(),
