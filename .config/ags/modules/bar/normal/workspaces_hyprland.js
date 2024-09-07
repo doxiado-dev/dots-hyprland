@@ -242,8 +242,14 @@ export default async (monitor = 0) => {
     onMiddleClick: () => {
       toggleWindowOnAllMonitors("osk");
     },
-    onSecondaryClick: () => {
-      App.toggleWindow("overview");
+    onSecondaryClick: (self, event) => {
+      const [_, cursorX] = event.get_coords();
+      const widgetWidth = self.get_allocation().width;
+      if (cursorX < 35 || cursorX > widgetWidth - 35) {
+        Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
+      } else {
+        App.toggleWindow("overview");
+      }
     },
     attribute: {
       clicked: false,
