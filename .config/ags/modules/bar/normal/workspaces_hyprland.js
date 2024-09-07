@@ -10,7 +10,6 @@ const { Box, DrawingArea, EventBox } = Widget;
 import Brightness from "../../../services/brightness.js";
 import Hyprland from "resource:///com/github/Aylur/ags/service/hyprland.js";
 import Indicator from "../../../services/indicator.js";
-
 const dummyWs = Box({ className: "bar-ws" }); // Not shown. Only for getting size props
 const dummyActiveWs = Box({ className: "bar-ws bar-ws-active" }); // Not shown. Only for getting size props
 const dummyOccupiedWs = Box({ className: "bar-ws bar-ws-occupied" }); // Not shown. Only for getting size props
@@ -22,26 +21,26 @@ const mix = (value1, value2, perc) => {
 const getFontWeightName = (weight) => {
   switch (weight) {
     case Pango.Weight.ULTRA_LIGHT:
-      return 'UltraLight';
+      return "UltraLight";
     case Pango.Weight.LIGHT:
-      return 'Light';
+      return "Light";
     case Pango.Weight.NORMAL:
-      return 'Normal';
+      return "Normal";
     case Pango.Weight.BOLD:
-      return 'Bold';
+      return "Bold";
     case Pango.Weight.ULTRA_BOLD:
-      return 'UltraBold';
+      return "UltraBold";
     case Pango.Weight.HEAVY:
-      return 'Heavy';
+      return "Heavy";
     default:
-      return 'Normal';
+      return "Normal";
   }
 };
 
 // Font size = workspace id
 const WorkspaceContents = (count = 10) => {
   return DrawingArea({
-    className: 'bar-ws-container',
+    className: "bar-ws-container",
     attribute: {
       initialized: false,
       workspaceMask: 0,
@@ -179,20 +178,76 @@ const WorkspaceContents = (count = 10) => {
 
             // Draw workspace numbers
             for (let i = 1; i <= count; i++) {
-              const inactivecolors = area.attribute.workspaceMask & (1 << i) ? occupiedfg : wsfg;
+              const inactivecolors =
+                area.attribute.workspaceMask & (1 << i) ? occupiedfg : wsfg;
               if (i == activeWs) {
-                cr.setSourceRGBA(activefg.red, activefg.green, activefg.blue, activefg.alpha);
-              } else if ((i == Math.floor(activeWs) && Hyprland.active.workspace.id < activeWs) || (i == Math.ceil(activeWs) && Hyprland.active.workspace.id > activeWs)) {
-                cr.setSourceRGBA(mix(activefg.red, inactivecolors.red, 1 - Math.abs(activeWs - i)), mix(activefg.green, inactivecolors.green, 1 - Math.abs(activeWs - i)), mix(activefg.blue, inactivecolors.blue, 1 - Math.abs(activeWs - i)), activefg.alpha);
-              } else if ((i == Math.floor(activeWs) && Hyprland.active.workspace.id > activeWs) || (i == Math.ceil(activeWs) && Hyprland.active.workspace.id < activeWs)) {
-                cr.setSourceRGBA(mix(activefg.red, inactivecolors.red, 1 - Math.abs(activeWs - i)), mix(activefg.green, inactivecolors.green, 1 - Math.abs(activeWs - i)), mix(activefg.blue, inactivecolors.blue, 1 - Math.abs(activeWs - i)), activefg.alpha);
+                cr.setSourceRGBA(
+                  activefg.red,
+                  activefg.green,
+                  activefg.blue,
+                  activefg.alpha,
+                );
+              } else if (
+                (i == Math.floor(activeWs) &&
+                  Hyprland.active.workspace.id < activeWs) ||
+                (i == Math.ceil(activeWs) &&
+                  Hyprland.active.workspace.id > activeWs)
+              ) {
+                cr.setSourceRGBA(
+                  mix(
+                    activefg.red,
+                    inactivecolors.red,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.green,
+                    inactivecolors.green,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.blue,
+                    inactivecolors.blue,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  activefg.alpha,
+                );
+              } else if (
+                (i == Math.floor(activeWs) &&
+                  Hyprland.active.workspace.id > activeWs) ||
+                (i == Math.ceil(activeWs) &&
+                  Hyprland.active.workspace.id < activeWs)
+              ) {
+                cr.setSourceRGBA(
+                  mix(
+                    activefg.red,
+                    inactivecolors.red,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.green,
+                    inactivecolors.green,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.blue,
+                    inactivecolors.blue,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  activefg.alpha,
+                );
               } else {
-                cr.setSourceRGBA(inactivecolors.red, inactivecolors.green, inactivecolors.blue, inactivecolors.alpha);
+                cr.setSourceRGBA(
+                  inactivecolors.red,
+                  inactivecolors.green,
+                  inactivecolors.blue,
+                  inactivecolors.alpha,
+                );
               }
 
               layout.set_text(`${i + offset}`, -1);
               const [layoutWidth, layoutHeight] = layout.get_pixel_size();
-              const x = -workspaceRadius + workspaceDiameter * i - layoutWidth / 2;
+              const x =
+                -workspaceRadius + workspaceDiameter * i - layoutWidth / 2;
               const y = (height - layoutHeight) / 2;
               cr.moveTo(x, y);
               PangoCairo.show_layout(cr, layout);
@@ -312,8 +367,18 @@ function handleScroll(self, event, monitor, direction) {
 function handlePrimaryClick(self, event) {
   const [_, cursorX] = event.get_coords();
   const widgetWidth = self.get_allocation().width;
+
   if (cursorX < 35) {
     App.toggleWindow("sideleft");
+  } else if (cursorX >= widgetWidth - 35) {
+    Hyprland.messageAsync(
+      `dispatch workspace ${userOptions.workspaces.shown}`,
+    ).catch(print);
+  } else {
+    const wsId = Math.ceil(
+      ((cursorX - 35) * userOptions.workspaces.shown) / (widgetWidth - 70),
+    );
+    Hyprland.messageAsync(`dispatch workspace ${wsId}`).catch(print);
   }
 }
 
