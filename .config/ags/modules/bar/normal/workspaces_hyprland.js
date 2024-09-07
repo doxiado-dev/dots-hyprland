@@ -293,10 +293,10 @@ export default async (monitor = 0) => {
 function handleScroll(self, event, monitor, direction) {
   const [_, cursorX] = event.get_coords();
   const widgetWidth = self.get_allocation().width;
-  if (cursorX < 30) {
+  if (cursorX < 35) {
     Indicator.popup(1);
     Brightness[monitor].screen_value += direction === "up" ? 0.05 : -0.05;
-  } else if (cursorX >= 30 && cursorX <= widgetWidth - 30) {
+  } else if (cursorX >= 35 && cursorX <= widgetWidth - 35) {
     Hyprland.messageAsync(
       `dispatch workspace ${direction === "up" ? "-1" : "+1"}`,
     ).catch(print);
@@ -306,7 +306,7 @@ function handleScroll(self, event, monitor, direction) {
 function handlePrimaryClick(self, event) {
   const [_, cursorX] = event.get_coords();
   const widgetWidth = self.get_allocation().width;
-  if (cursorX < 30) {
+  if (cursorX < 35) {
     App.toggleWindow("sideleft");
   }
 }
@@ -315,9 +315,9 @@ function handleMotionNotify(self, event) {
   if (!self.attribute.clicked) return;
   const [_, cursorX] = event.get_coords();
   const widgetWidth = self.get_allocation().width;
-  if (cursorX >= 30 && cursorX <= widgetWidth - 30) {
+  if (cursorX >= 35 && cursorX <= widgetWidth - 35) {
     const wsId = Math.ceil(
-      (cursorX * userOptions.workspaces.shown) / widgetWidth,
+      ((cursorX - 35) * userOptions.workspaces.shown) / (widgetWidth - 60),
     );
     Utils.execAsync([
       `${App.configDir}/scripts/hyprland/workspace_action.sh`,
@@ -333,17 +333,15 @@ function handleButtonPress(self, event) {
   const widgetWidth = self.get_allocation().width;
   if (button === 1) {
     self.attribute.clicked = true;
-    if (cursorX >= 30 && cursorX <= widgetWidth - 30) {
+    if (cursorX >= 35 && cursorX <= widgetWidth - 35) {
       const wsId = Math.ceil(
-        (cursorX * userOptions.workspaces.shown) / widgetWidth,
+        ((cursorX - 35) * userOptions.workspaces.shown) / (widgetWidth - 60),
       );
       Utils.execAsync([
         `${App.configDir}/scripts/hyprland/workspace_action.sh`,
         "workspace",
         `${wsId}`,
       ]).catch(print);
-    } else if (button === 1) {
-      Hyprland.messageAsync(`dispatch togglespecialworkspace`).catch(print);
     }
   }
 }
