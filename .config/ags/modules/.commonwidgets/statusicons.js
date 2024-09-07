@@ -108,11 +108,14 @@ export const BluetoothIndicator = (isTopbar = false) =>
         label: "bluetooth",
       }),
     },
-    setup: (self) =>
-      self.hook(Bluetooth, (stack) => {
+    setup: (self) => {
+      const updateBluetoothState = (stack) => {
         stack.shown = String(Bluetooth.enabled);
         stack.visible = !(isTopbar && Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
-      }),
+      };
+      updateBluetoothState(self);
+      self.hook(Bluetooth, updateBluetoothState);
+    },
   });
 
 const BluetoothDevices = () =>
