@@ -82,7 +82,15 @@ export default () =>
     onScrollUp: (self) => switchToRelativeWorkspace(self, -1),
     onScrollDown: (self) => switchToRelativeWorkspace(self, +1),
     onPrimaryClick: () => showMusicControls.setValue(!showMusicControls.value),
-    onSecondaryClick: () => execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`']).catch(print),
+    onSecondaryClick: (self) => {
+      const rect = self.get_allocation();
+      const clickX = self.get_pointer()[0];
+      if (clickX > rect.width / 2) {
+        execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`']).catch(print);
+      } else {
+        execAsync('playerctl previous').catch(print);
+      }
+    },
     onMiddleClick: () => execAsync('playerctl play-pause').catch(print),
     child: Widget.Box({
       className: "bar-group-margin bar-sides",
