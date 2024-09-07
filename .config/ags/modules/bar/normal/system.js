@@ -1,6 +1,7 @@
 // This is for the right pills of the bar.
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
+import { showMusicControls } from '../../../variables.js';
 const { Box, Label, Button, Overlay, Revealer, Scrollable, Stack, EventBox } =
   Widget;
 const { exec, execAsync } = Utils;
@@ -80,7 +81,9 @@ export default () =>
   Widget.EventBox({
     onScrollUp: (self) => switchToRelativeWorkspace(self, -1),
     onScrollDown: (self) => switchToRelativeWorkspace(self, +1),
-    onPrimaryClick: () => App.toggleWindow("sideright"),
+    onPrimaryClick: () => showMusicControls.setValue(!showMusicControls.value),
+    onSecondaryClick: () => execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`']).catch(print),
+    onMiddleClick: () => execAsync('playerctl play-pause').catch(print),
     child: Widget.Box({
       className: "bar-group-margin bar-sides",
       children: [

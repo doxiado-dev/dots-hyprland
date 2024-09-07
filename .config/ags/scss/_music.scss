@@ -25,7 +25,7 @@ $onSecondaryContainer: mix($color7, $color2, 90%);
 .osd-music {
     @include menu_decel;
     @include elevation2;
-    margin-top: 0.1rem; // Reduced margin-top
+    margin-top: 0.313rem;
     @include normal-rounding;
     // min-height: 7.159rem;
     min-width: 29.659rem;
