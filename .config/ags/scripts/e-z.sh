@@ -1,19 +1,33 @@
 #!/bin/bash -e
 
-# Go to https://e-z.gg/dash/account
-## Make sure you're log in and Copy the API KEY and put it below this.
+auth_file=$(eval echo ~/.config/.e-z.key)
+
+if [ ! -f "$auth_file" ]; then
+    touch "$auth_file"
+    echo "# Go to https://e-z.gg/dash/account" >> "$auth_file"
+    echo "## Make sure you're log in and Copy the API KEY and paste it below." >> "$auth_file"
+    echo "API Key file created at $auth_file. Please add your API KEY to this file."
+    notify-send "API Key file created." "Add it to $auth_file."
+    exit 1
+fi
+
 auth=""
+while IFS= read -r line; do
+    [[ "$line" =~ ^#.*$ ]] && continue
+    auth="$line"
+done < "$auth_file"
+
+if [[ -z "$auth" ]]; then
+    echo "API Key is not set in $auth_file."
+    echo "Edit the file to add your E-Z API KEY."
+    notify-send "API Key is not added." "Add it to $auth_file"
+    exit 1
+fi
+
 url="https://api.e-z.host/files"
 
 temp_file="/tmp/screenshot.png"
-config_file="$HOME/.config/flameshot/flameshot.ini"
-
-if [[ -z "$auth" ]]; then
-    echo "API Key is not set."
-    echo "Edit the script on $HOME/.config/ags/scripts/e-z.sh to add your E-Z API KEY on the auth variable."
-    notify-send "API Key is not added." 'Edit the script to add your E-Z API KEY.'
-    exit 1
-fi
+config_file=$(eval echo ~/.config/flameshot/flameshot.ini)
 
 if [ ! -f "$config_file" ]; then
     mkdir -p "$(dirname "$config_file")"

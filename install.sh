@@ -290,7 +290,7 @@ printf "https://end-4.github.io/dots-hyprland-wiki/en/i-i/01setup/#post-installa
 printf "for hints on launching Hyprland.\e[0m\n"
 printf "\n"
 printf "\e[1;34mPlease update file:\n"
-printf "\e[30m\e[46m ~/.config/ags/scripts/e-z.sh \e[0m\n"
+printf "\e[30m\e[46m ~/.config/.e-z.key \e[0m\n"
 printf "\n"
 printf "\e[1;34mAnd Recorder's Default Config: \e[0m\n"
 printf "\e[30m\e[46m e-z-recorder --config \e[0m\n"
