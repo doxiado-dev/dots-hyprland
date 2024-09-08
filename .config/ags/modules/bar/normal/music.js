@@ -2,6 +2,7 @@ const { GLib } = imports.gi;
 import Widget from 'resource:///com/github/Aylur/ags/widget.js';
 import * as Utils from 'resource:///com/github/Aylur/ags/utils.js';
 import Mpris from 'resource:///com/github/Aylur/ags/service/mpris.js';
+import Brightness from "../../../services/brightness.js";
 const { Box, Button, EventBox, Label, Overlay, Revealer, Scrollable } = Widget;
 const { execAsync, exec } = Utils;
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
@@ -137,14 +138,35 @@ const switchToRelativeWorkspace = async (self, num) => {
     }
 }
 
+const SpaceLeftDefaultClicks = (child) =>
+    EventBox({
+        onPrimaryClick: () => App.toggleWindow("sideleft"),
+        onSecondaryClick: () =>
+            execAsync([
+                "bash",
+                "-c",
+                'playerctl previous || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"` &',
+            ]).catch(print),
+        onMiddleClick: () => execAsync("playerctl play-pause").catch(print),
+        child: Box({
+            className: 'bar-spaceright',
+            children: [child],
+        }),
+    });
+
+const handleScroll = (self, event, monitor, direction) => {
+    Brightness[monitor].screen_value += direction === "up" ? 0.05 : -0.05;
+}
+
 export default () => {
     return EventBox({
-        onScrollUp: (self) => switchToRelativeWorkspace(self, -1),
-        onScrollDown: (self) => switchToRelativeWorkspace(self, +1),
+        onScrollUp: (self, event) => handleScroll(self, event, 0, "up"),
+        onScrollDown: (self, event) => handleScroll(self, event, 0, "down"),
         child: Box({
             className: 'spacing-h-4',
             children: [
                 SystemResourcesOrCustomModule(),
+                SpaceLeftDefaultClicks(Box({ hexpand: true })),
             ]
         })
     });

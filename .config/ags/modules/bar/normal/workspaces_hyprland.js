@@ -414,7 +414,7 @@ function handleButtonPress(self, event) {
       const wsId = Math.ceil(
         ((cursorX - 35) * userOptions.workspaces.shown) / (widgetWidth - 60),
       );
-      if (wsId !== Hyprland.active.workspace.id) { // Check if the target workspace is different
+      if (wsId !== Hyprland.active.workspace.id) {
         Utils.execAsync([
           `${App.configDir}/scripts/hyprland/workspace_action.sh`,
           "workspace",

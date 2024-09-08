@@ -8,6 +8,7 @@ import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from "../../variables.js";
+import SpaceLeftDefaultClicks from "./normal/music.js";
 
 const NormalOptionalWorkspaces = async () => {
   try {
@@ -64,6 +65,10 @@ export const Bar = async (monitor = 0) => {
         }),
         SideModule([Music()]),
       ],
+    }),
+    endWidget: Widget.Box({
+      className: "bar-spaceright",
+      children: [SpaceLeftDefaultClicks()],
     }),
     centerWidget: Widget.Box({
       className: "spacing-v-15",
