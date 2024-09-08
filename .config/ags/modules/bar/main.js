@@ -66,10 +66,6 @@ export const Bar = async (monitor = 0) => {
         SideModule([Music()]),
       ],
     }),
-    endWidget: Widget.Box({
-      className: "bar-spaceright",
-      children: [SpaceLeftDefaultClicks()],
-    }),
     centerWidget: Widget.Box({
       className: "spacing-v-15",
       children: [System()],
