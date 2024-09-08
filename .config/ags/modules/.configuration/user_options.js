@@ -144,6 +144,7 @@ let configOptions = {
   weather: {
     city: "",
     preferredUnit: "C", // Either C or F
+    enabled: false,
   },
   workspaces: {
     shown: 6,
