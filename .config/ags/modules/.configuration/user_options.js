@@ -81,6 +81,7 @@ let configOptions = {
   },
   music: {
     preferredPlayer: "plasma-browser-integration",
+    enableMusicWidget: false,
   },
   onScreenKeyboard: {
     layout: "qwerty_full", // See modules/onscreenkeyboard/onscreenkeyboard.js for available layouts

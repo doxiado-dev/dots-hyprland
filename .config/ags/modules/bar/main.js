@@ -8,7 +8,6 @@ import System from "./normal/system.js";
 import { enableClickthrough } from "../.widgetutils/clickthrough.js";
 import { RoundedCorner } from "../.commonwidgets/cairo_roundedcorner.js";
 import { currentShellMode } from "../../variables.js";
-import SpaceLeftDefaultClicks from "./normal/music.js";
 
 const NormalOptionalWorkspaces = async () => {
   try {

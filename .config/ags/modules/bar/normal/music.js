@@ -122,7 +122,16 @@ const SystemResourcesOrCustomModule = () => {
                                 'bar-cpu-circprog', 'bar-cpu-txt', 'bar-cpu-icon'),
                         ]
                     }),
-                    setup: (self) => self.revealChild = true, // Always show the resources
+                    setup: (self) => {
+                        if (userOptions.music.enableMusicWidget) {
+                            self.hook(Mpris, label => {
+                                const mpris = Mpris.getPlayer('');
+                                self.revealChild = (!mpris);
+                            });
+                        } else {
+                            self.revealChild = true; // Always show the resources
+                        }
+                    }
                 })
             ],
         })
@@ -158,6 +167,81 @@ const handleScroll = (self, event, monitor, direction) => {
     Brightness[monitor].screen_value += direction === "up" ? 0.05 : -0.05;
 }
 
+const TrackProgress = () => {
+    const _updateProgress = (circprog) => {
+        const mpris = Mpris.getPlayer('');
+        if (!mpris) return;
+        // Set circular progress value
+        circprog.css = `font-size: ${Math.max(mpris.position / mpris.length * 100, 0)}px;`;
+    }
+    return AnimatedCircProg({
+        className: 'bar-music-circprog',
+        vpack: 'center',
+        hpack: 'center',
+        extraSetup: (self) => self
+            .hook(Mpris, _updateProgress)
+            .poll(3000, _updateProgress),
+    });
+}
+
+const MusicWidget = () => {
+    const playingState = Box({
+        homogeneous: true,
+        children: [Overlay({
+            child: Box({
+                vpack: 'center',
+                className: 'bar-music-playstate',
+                homogeneous: true,
+                children: [Label({
+                    vpack: 'center',
+                    className: 'bar-music-playstate-txt',
+                    justification: 'center',
+                    setup: (self) => self.hook(Mpris, label => {
+                        const mpris = Mpris.getPlayer('');
+                        label.label = `${mpris !== null && mpris.playBackStatus == 'Playing' ? 'pause' : 'play_arrow'}`;
+                    }),
+                })],
+                setup: (self) => self.hook(Mpris, label => {
+                    const mpris = Mpris.getPlayer('');
+                    if (!mpris) return;
+                    label.toggleClassName('bar-music-playstate-playing', mpris !== null && mpris.playBackStatus == 'Playing');
+                    label.toggleClassName('bar-music-playstate', mpris !== null || mpris.playBackStatus == 'Paused');
+                }),
+            }),
+            overlays: [TrackProgress()],
+        })],
+    });
+
+    const trackTitle = Label({
+        hexpand: true,
+        className: 'txt-smallie bar-music-txt',
+        truncate: 'end',
+        maxWidthChars: 1,
+        setup: (self) => self.hook(Mpris, label => {
+            const mpris = Mpris.getPlayer('');
+            if (mpris) label.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}`;
+            else label.label = 'No media';
+        }),
+    });
+
+    const musicStuff = Box({
+        className: 'spacing-h-10',
+        hexpand: true,
+        children: [playingState, trackTitle],
+    });
+
+    return EventBox({
+        child: BarGroup({ child: musicStuff }),
+        onPrimaryClick: () => showMusicControls.setValue(!showMusicControls.value),
+        onSecondaryClick: () => execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"` &']).catch(print),
+        onMiddleClick: () => execAsync('playerctl play-pause').catch(print),
+        setup: (self) => self.on('button-press-event', (self, event) => {
+            if (event.get_button()[1] === 8) // Side button
+                execAsync('playerctl previous').catch(print);
+        }),
+    });
+}
+
 export default () => {
     return EventBox({
         onScrollUp: (self, event) => handleScroll(self, event, 0, "up"),
@@ -166,6 +250,7 @@ export default () => {
             className: 'spacing-h-4',
             children: [
                 SystemResourcesOrCustomModule(),
+                userOptions.music.enableMusicWidget ? MusicWidget() : null,
                 SpaceLeftDefaultClicks(Box({ hexpand: true })),
             ]
         })
