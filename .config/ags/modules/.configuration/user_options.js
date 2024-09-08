@@ -147,6 +147,7 @@ let configOptions = {
   },
   workspaces: {
     shown: 6,
+    displayMode: "num", // num for numbers, dot for dots
   },
   dock: {
     enabled: true,

@@ -49,17 +49,14 @@ const WorkspaceContents = (count = 10) => {
         const offset =
           Math.floor((Hyprland.active.workspace.id - 1) / count) *
           userOptions.workspaces.shown;
-        // if (self.attribute.initialized) return; // We only need this to run once
         const workspaces = Hyprland.workspaces;
         let workspaceMask = 0;
         for (let i = 0; i < workspaces.length; i++) {
           const ws = workspaces[i];
-          if (ws.id <= offset || ws.id > offset + count) continue; // Out of range, ignore
+          if (ws.id <= offset || ws.id > offset + count) continue;
           if (workspaces[i].windows > 0) workspaceMask |= 1 << (ws.id - offset);
         }
-        // console.log('Mask:', workspaceMask.toString(2));
         self.attribute.workspaceMask = workspaceMask;
-        // self.attribute.initialized = true;
         self.queue_draw();
       },
       toggleMask: (self, occupied, name) => {
@@ -169,11 +166,10 @@ const WorkspaceContents = (count = 10) => {
             );
             layout.set_font_description(fontDesc);
             cr.setAntialias(Cairo.Antialias.BEST);
-            // Get kinda min radius for number indicators
             layout.set_text("0".repeat(count.toString().length), -1);
             const [layoutWidth, layoutHeight] = layout.get_pixel_size();
             const indicatorRadius =
-              (Math.max(layoutWidth, layoutHeight) / 2) * 1.15; // smaller than sqrt(2)*radius
+              (Math.max(layoutWidth, layoutHeight) / 2) * 1.15;
             const indicatorGap = workspaceRadius - indicatorRadius;
 
             // Draw workspace numbers
@@ -255,7 +251,6 @@ const WorkspaceContents = (count = 10) => {
             }
 
             // Draw active ws
-            // base
             cr.setSourceRGBA(
               activebg.red,
               activebg.green,
@@ -270,21 +265,38 @@ const WorkspaceContents = (count = 10) => {
               2 * Math.PI,
             );
             cr.fill();
-            // inner decor
-            cr.setSourceRGBA(
-              activefg.red,
-              activefg.green,
-              activefg.blue,
-              activefg.alpha,
-            );
-            cr.arc(
-              activeWsCenterX,
-              activeWsCenterY,
-              indicatorRadius * 0.2,
-              0,
-              2 * Math.PI,
-            );
-            cr.fill();
+
+            if (userOptions.workspaces.displayMode === 'num') {
+              cr.setSourceRGBA(
+                activefg.red,
+                activefg.green,
+                activefg.blue,
+                activefg.alpha,
+              );
+              layout.set_text(`${Hyprland.active.workspace.id}`, -1);
+              const [activeLayoutWidth, activeLayoutHeight] = layout.get_pixel_size();
+              cr.moveTo(
+                activeWsCenterX - activeLayoutWidth / 2,
+                activeWsCenterY - activeLayoutHeight / 2
+              );
+              PangoCairo.show_layout(cr, layout);
+              cr.stroke();
+            } else {
+              cr.setSourceRGBA(
+                activefg.red,
+                activefg.green,
+                activefg.blue,
+                activefg.alpha,
+              );
+              cr.arc(
+                activeWsCenterX,
+                activeWsCenterY,
+                indicatorRadius * 0.2,
+                0,
+                2 * Math.PI,
+              );
+              cr.fill();
+            }
           }),
         ),
   });
