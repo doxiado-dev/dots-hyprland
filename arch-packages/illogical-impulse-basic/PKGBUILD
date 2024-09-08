@@ -11,6 +11,7 @@ depends=(
 	cliphist
 	cmake
 	curl
+	tesseract
 	fuzzel
 	rsync
 	wget
