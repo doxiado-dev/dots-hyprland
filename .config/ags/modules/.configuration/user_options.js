@@ -31,8 +31,6 @@ let configOptions = {
     layerSmoke: false,
     layerSmokeStrength: 0.2,
     barRoundCorners: 1, // 0: No, 1: Yes
-
-    // Changing this to 2 will break the sidemodule/brightness position, will be fixed sometime in the future.
     fakeScreenRounding: 1, // 0: None | 1: Always | 2: When not fullscreen
   },
   apps: {
