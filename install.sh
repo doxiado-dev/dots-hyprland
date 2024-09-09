@@ -256,6 +256,9 @@ v gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 v gsettings set org.gnome.desktop.interface cursor-theme 'macOS'
 v gsettings set org.gnome.desktop.interface cursor-size 24
 
+# Avoid the "Packages aren't on the AUR" message
+sudo sed -i -e '/^#IgnorePkg\\s*=/s/^#\\s*IgnorePkg\\s*=.*/IgnorePkg = illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/' /etc/pacman.conf && sudo sed -i -e '/^IgnorePkg\\s*=/{/illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/!s/^\\(IgnorePkg\\s*=\\s*\\)\\(.*\\)/\\1\\2 illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/}' /etc/pacman.conf
+
 # Prevent hyprland from not fully loaded
 sleep 1
 try hyprctl reload
