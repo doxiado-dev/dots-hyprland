@@ -9,8 +9,12 @@ import Notifications from "resource:///com/github/Aylur/ags/service/notification
 import { languages } from "./statusicons_languages.js";
 import Battery from "resource:///com/github/Aylur/ags/service/battery.js";
 import { AnimatedCircProg } from "./cairo_circularprogress.js";
-import { WWO_CODE, WEATHER_SYMBOL, NIGHT_WEATHER_SYMBOL } from '../.commondata/weather.js';
-import GLib from 'gi://GLib';
+import {
+  WWO_CODE,
+  WEATHER_SYMBOL,
+  NIGHT_WEATHER_SYMBOL,
+} from "../.commondata/weather.js";
+import GLib from "gi://GLib";
 // A guessing func to try to support langs not listed in data/languages.js
 function isLanguageMatch(abbreviation, word) {
   const lowerAbbreviation = abbreviation.toLowerCase();
@@ -108,14 +112,13 @@ export const BluetoothIndicator = (isTopbar = false) =>
         label: "bluetooth",
       }),
     },
-    setup: (self) => {
-      const updateBluetoothState = (stack) => {
-        stack.shown = String(Bluetooth.enabled);
-        stack.visible = !(isTopbar && Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
-      };
-      updateBluetoothState(self);
-      self.hook(Bluetooth, updateBluetoothState);
-    },
+    setup: (self) =>
+      self.hook(Bluetooth, (stack) => {
+        setTimeout(() => {
+          stack.shown = String(Bluetooth.enabled);
+          stack.visible = !(isTopbar && Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
+        }, 500);
+      }),
   });
 
 const BluetoothDevices = () =>
@@ -277,15 +280,16 @@ export const NetworkIndicator = () =>
       }),
   });
 
-  const BarGroup = ({ child }) => Widget.Box({
-    className: 'bar-group-margin bar-sides',
+const BarGroup = ({ child }) =>
+  Widget.Box({
+    className: "bar-group-margin bar-sides",
     children: [
-        Widget.Box({
-            className: 'bar-group bar-group-standalone bar-group-pad-system',
-            children: [child],
-        }),
-    ]
-});
+      Widget.Box({
+        className: "bar-group bar-group-standalone bar-group-pad-system",
+        children: [child],
+      }),
+    ],
+  });
 
 const HyprlandXkbKeyboardLayout = async ({ useFlag } = {}) => {
   try {
@@ -398,106 +402,138 @@ const WEATHER_CACHE_FOLDER = `${GLib.get_user_cache_dir()}/ags/weather`;
 Utils.exec(`mkdir -p ${WEATHER_CACHE_FOLDER}`);
 
 const BarBatteryProgress = () => {
-    const _updateProgress = (circprog) => {
-        circprog.css = `font-size: ${Math.abs(Battery.percent)}px;`;
-        circprog.toggleClassName('bar-batt-circprog-low', Battery.percent <= userOptions.battery.low);
-        circprog.toggleClassName('bar-batt-circprog-full', Battery.charged);
-    };
-    return AnimatedCircProg({
-        className: 'bar-batt-circprog',
-        vpack: 'center',
-        hpack: 'center',
-        extraSetup: (self) => self.hook(Battery, _updateProgress),
-    });
+  const _updateProgress = (circprog) => {
+    circprog.css = `font-size: ${Math.abs(Battery.percent)}px;`;
+    circprog.toggleClassName(
+      "bar-batt-circprog-low",
+      Battery.percent <= userOptions.battery.low,
+    );
+    circprog.toggleClassName("bar-batt-circprog-full", Battery.charged);
+  };
+  return AnimatedCircProg({
+    className: "bar-batt-circprog",
+    vpack: "center",
+    hpack: "center",
+    extraSetup: (self) => self.hook(Battery, _updateProgress),
+  });
 };
 
-const BarBattery = () => Widget.Box({
-    className: 'spacing-h-4 bar-batt-txt',
+const BarBattery = () =>
+  Widget.Box({
+    className: "spacing-h-4 bar-batt-txt",
     children: [
-        Widget.Revealer({
-            transitionDuration: userOptions.animations.durationSmall,
-            revealChild: false,
-            transition: 'slide_right',
-            child: MaterialIcon('bolt', 'norm', { tooltipText: "Charging" }),
-            setup: (self) => self.hook(Battery, revealer => {
-                self.revealChild = Battery.charging;
+      Widget.Revealer({
+        transitionDuration: userOptions.animations.durationSmall,
+        revealChild: false,
+        transition: "slide_right",
+        child: MaterialIcon("bolt", "norm", { tooltipText: "Charging" }),
+        setup: (self) =>
+          self.hook(Battery, (revealer) => {
+            self.revealChild = Battery.charging;
+          }),
+      }),
+      Widget.Label({
+        className: "txt-smallie",
+        setup: (self) =>
+          self.hook(Battery, (label) => {
+            label.label = `${Number.parseFloat(Battery.percent.toFixed(1))}%`;
+          }),
+      }),
+      Widget.Overlay({
+        child: Widget.Box({
+          vpack: "center",
+          className: "bar-batt",
+          homogeneous: true,
+          children: [MaterialIcon("battery_full", "small")],
+          setup: (self) =>
+            self.hook(Battery, (box) => {
+              box.toggleClassName(
+                "bar-batt-low",
+                Battery.percent <= userOptions.battery.low,
+              );
+              box.toggleClassName("bar-batt-full", Battery.charged);
             }),
         }),
-        Widget.Label({
-            className: 'txt-smallie',
-            setup: (self) => self.hook(Battery, label => {
-                label.label = `${Number.parseFloat(Battery.percent.toFixed(1))}%`;
-            }),
-        }),
-        Widget.Overlay({
-            child: Widget.Box({
-                vpack: 'center',
-                className: 'bar-batt',
-                homogeneous: true,
-                children: [
-                    MaterialIcon('battery_full', 'small'),
-                ],
-                setup: (self) => self.hook(Battery, box => {
-                    box.toggleClassName('bar-batt-low', Battery.percent <= userOptions.battery.low);
-                    box.toggleClassName('bar-batt-full', Battery.charged);
-                }),
-            }),
-            overlays: [
-                BarBatteryProgress(),
-            ]
-        }),
-    ]
-});
-
-const WeatherWidget = () => Widget.Box({
-    hexpand: true,
-    hpack: 'center',
-    className: 'spacing-h-4 txt-onSurfaceVariant',
-    children: [
-        MaterialIcon('device_thermostat', 'small'),
-        Widget.Label({
-            label: 'Weather',
-        })
+        overlays: [BarBatteryProgress()],
+      }),
     ],
-    setup: (self) => self.poll(900000, async (self) => {
-        const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + '/wttr.in.txt';
-        const updateWeatherForCity = (city) => execAsync(`curl https://wttr.in/${city.replace(/ /g, '%20')}?format=j1`)
-            .then(output => {
-                const weather = JSON.parse(output);
-                Utils.writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
+  });
+
+const WeatherWidget = () =>
+  Widget.Box({
+    hexpand: true,
+    hpack: "center",
+    className: "spacing-h-4 txt-onSurfaceVariant",
+    children: [
+      MaterialIcon("device_thermostat", "small"),
+      Widget.Label({
+        label: "Weather",
+      }),
+    ],
+    setup: (self) =>
+      self.poll(900000, async (self) => {
+        const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
+        const updateWeatherForCity = (city) =>
+          execAsync(
+            `curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`,
+          )
+            .then((output) => {
+              const weather = JSON.parse(output);
+              Utils.writeFile(
+                JSON.stringify(weather),
+                WEATHER_CACHE_PATH,
+              ).catch(print);
+              const weatherCode = weather.current_condition[0].weatherCode;
+              const weatherDesc =
+                weather.current_condition[0].weatherDesc[0].value;
+              const temperature =
+                weather.current_condition[0][
+                  `temp_${userOptions.weather.preferredUnit}`
+                ];
+              const feelsLike =
+                weather.current_condition[0][
+                  `FeelsLike${userOptions.weather.preferredUnit}`
+                ];
+              const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
+              self.children[0].label = weatherSymbol;
+              self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+              self.tooltipText = weatherDesc;
+            })
+            .catch((err) => {
+              try {
+                const weather = JSON.parse(Utils.readFile(WEATHER_CACHE_PATH));
                 const weatherCode = weather.current_condition[0].weatherCode;
-                const weatherDesc = weather.current_condition[0].weatherDesc[0].value;
-                const temperature = weather.current_condition[0][`temp_${userOptions.weather.preferredUnit}`];
-                const feelsLike = weather.current_condition[0][`FeelsLike${userOptions.weather.preferredUnit}`];
+                const weatherDesc =
+                  weather.current_condition[0].weatherDesc[0].value;
+                const temperature =
+                  weather.current_condition[0][
+                    `temp_${userOptions.weather.preferredUnit}`
+                  ];
+                const feelsLike =
+                  weather.current_condition[0][
+                    `FeelsLike${userOptions.weather.preferredUnit}`
+                  ];
                 const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
                 self.children[0].label = weatherSymbol;
                 self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
                 self.tooltipText = weatherDesc;
-            }).catch((err) => {
-                try {
-                    const weather = JSON.parse(Utils.readFile(WEATHER_CACHE_PATH));
-                    const weatherCode = weather.current_condition[0].weatherCode;
-                    const weatherDesc = weather.current_condition[0].weatherDesc[0].value;
-                    const temperature = weather.current_condition[0][`temp_${userOptions.weather.preferredUnit}`];
-                    const feelsLike = weather.current_condition[0][`FeelsLike${userOptions.weather.preferredUnit}`];
-                    const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
-                    self.children[0].label = weatherSymbol;
-                    self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
-                    self.tooltipText = weatherDesc;
-                } catch (err) {
-                    print(err);
-                }
+              } catch (err) {
+                print(err);
+              }
             });
-        if (userOptions.weather.city != '' && userOptions.weather.city != null) {
-            updateWeatherForCity(userOptions.weather.city.replace(/ /g, '%20'));
+        if (
+          userOptions.weather.city != "" &&
+          userOptions.weather.city != null
+        ) {
+          updateWeatherForCity(userOptions.weather.city.replace(/ /g, "%20"));
         } else {
-            Utils.execAsync('curl ipinfo.io')
-                .then(output => JSON.parse(output)['city'].toLowerCase())
-                .then(updateWeatherForCity)
-                .catch(print);
+          Utils.execAsync("curl ipinfo.io")
+            .then((output) => JSON.parse(output)["city"].toLowerCase())
+            .then(updateWeatherForCity)
+            .catch(print);
         }
-    }),
-});
+      }),
+  });
 
 export const StatusIcons = (props = {}, monitor = 0) =>
   Widget.Box({
@@ -511,10 +547,7 @@ export const StatusIcons = (props = {}, monitor = 0) =>
         NetworkIndicator(),
         Widget.Box({
           className: "spacing-h-5",
-          children: [
-            BluetoothIndicator(true),
-            BluetoothDevices(),
-          ],
+          children: [BluetoothIndicator(true), BluetoothDevices()],
         }),
         ...(userOptions.weather.enabled ? [WeatherWidget()] : []),
         Utilities(),
@@ -546,4 +579,3 @@ const Utilities = () =>
       }),
     ],
   });
-
