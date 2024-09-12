@@ -86,7 +86,7 @@ export default (monitor = 0) => {
                 // Indicator.popup(1);
             }
             self.hook(Audio, updateAudioDevice);
-            Utils.timeout(1000, updateAudioDevice);
+            Utils.timeout(1000, () => updateAudioDevice(self));
         }),
         labelSetup: (self) => self.hook(Audio, (label) => {
             const newDevice = (Audio.speaker?.name);
