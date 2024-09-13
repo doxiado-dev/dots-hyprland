@@ -39,7 +39,7 @@
      - See the [Wiki](https://end-4.github.io/dots-hyprland-wiki/en/i-i/01setup/)
      - (_Available in: English, Vietnamese, and Simplified Chinese. Translations are welcome._)
 
-   - **Default keybinds**: Parts similar to Windows and GNOME. Hit Super+/ for a list.
+   - **Default keybinds**: Parts similar to Windows and GNOME. Hit Super+H for a list.
      <details>
        <summary>Here's an image, just in case:</summary>
 
@@ -70,11 +70,14 @@
    - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/verysillycat/dots-hyprland/issues/new/choose)
 </details>
 
-## Differences with end's dotfiles
+<div align="center">
+    <h2>• differences with end's dotfiles •</h2>
+    <h3></h3>
+</div>
 * [Topbar](https://i.e-z.host/n5gh2jh4.png) that has a GNOME style and is small monitor friendly
 * [E-Z](https://e-z.host) Screenshots & Recording integraton on default
 * No Booru & Waifu APIs on sideright module
-* Compact Dock with No Pin icon
+* Different Dock Functionality with No Pin icon
 * Different Shortcuts
 
 <div align="center">
