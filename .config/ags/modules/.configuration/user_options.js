@@ -82,7 +82,7 @@ let configOptions = {
     enableMusicWidget: false,
   },
   onScreenKeyboard: {
-    layout: "qwerty_full", // See modules/onscreenkeyboard/onscreenkeyboard.js for available layouts
+    layout: "qwerty_latam", // See modules/onscreenkeyboard/onscreenkeyboard.js for available layouts
   },
   overview: {
     scale: 0.18, // Relative to screen size
