@@ -258,6 +258,30 @@ const WorkspaceContents = (count = 10) => {
                   ),
                   activefg.alpha,
                 );
+              } else if (
+                (i == Math.floor(activeWs) &&
+                  Hyprland.active.workspace.id > activeWs) ||
+                (i == Math.ceil(activeWs) &&
+                  Hyprland.active.workspace.id < activeWs)
+              ) {
+                cr.setSourceRGBA(
+                  mix(
+                    activefg.red,
+                    inactivecolors.red,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.green,
+                    inactivecolors.green,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  mix(
+                    activefg.blue,
+                    inactivecolors.blue,
+                    1 - Math.abs(activeWs - i),
+                  ),
+                  activefg.alpha,
+                );
               } else {
                 cr.setSourceRGBA(
                   inactivecolors.red,
