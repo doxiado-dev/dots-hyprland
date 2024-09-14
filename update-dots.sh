@@ -50,7 +50,7 @@ get_destination() {
 	# Local directory
 	elif [ "$localdir" = ".local/bin" ]; then
 		printf "$XDG_BIN_HOME/$everything_else"
-	
+
 	# There are no files in either of the following right now, but putting it here just in case as .local was specified
 	elif [ "$localdir" = ".local/share" ]; then
 		printf "$XDG_DATA_HOME/$everything_else"
@@ -107,11 +107,11 @@ while IFS= read -r -d '' file; do
         echo -e "${YELLOW}Skipping $file${RESET}"
         continue
     fi
-    
+
     # Calculate checksums
     base_checksum=$(get_checksum "$base/$file")
     home_checksum=$(get_checksum "$(get_destination $file)")
-    
+
     # Compare checksums and add to modified_files if necessary
     if [[ $base_checksum != $home_checksum ]]; then
         modified_files+=("$file")
@@ -194,10 +194,10 @@ if ! git pull; then
         echo -e "${RED}Exiting...${RESET}"
         exit 1
     fi
-    
+
     mkdir -p ./cache
     temp_folder=$(mktemp -d -p ./cache)
-    git clone --branch "$current_branch" https://github.com/end-4/dots-hyprland/ --depth=1 "$temp_folder"
+    git clone --branch "$current_branch" https://github.com/verysillycat/dots-hyprland/ --depth=1 "$temp_folder"
     # Replace the existing dotfiles with the new ones
     for folder in "${folders[@]}"; do
         find "$temp_folder/$folder" -print0 | while IFS= read -r -d '' file; do
@@ -213,21 +213,21 @@ if ! git pull; then
             fi
         done
     done
-    
+
     deleted_files=()
     renamed_files=()
-    
+
     # Extract deleted files and save to variable
     deleted_files=$(git diff --name-status HEAD origin/$current_branch | awk '$1 == "D" {print $2}')
-    
+
     # Extract renamed files and save to variable
     renamed_files=$(git diff --name-status HEAD origin/$current_branch | awk '$1 ~ /^R/ {print $2}')
-    
-    
+
+
     files_to_remove=()
-    
+
     for file in $deleted_files; do
-        
+
         if ! file_in_excludes "$file" && [[ ! " ${modified_files[*]} " =~ " $file " ]]; then
             files_to_remove+=("$file")
         fi
@@ -237,7 +237,7 @@ if ! git pull; then
             files_to_remove+=("$file")
         fi
     done
-    
+
     # Remove files
     for file in "${files_to_remove[@]}"; do
         echo -e "${YELLOW}Removing $file ...${RESET}"
@@ -246,7 +246,7 @@ if ! git pull; then
             rm -rf "$homefile"
         fi
     done
-    
+
     echo -e "${GREEN}New dotfiles have been copied. Cleaning up temporary folder...${RESET}"
     rm -rf "$temp_folder"
     echo -e "${GREEN}Done. You may exit now.${RESET}"
@@ -268,7 +268,7 @@ renamed_files=$(git diff --name-status @{1} | awk '$1 ~ /^R/ {print $2}')
 files_to_remove=()
 
 for file in $deleted_files; do
-    
+
     if ! file_in_excludes "$file" && [[ ! " ${modified_files[*]} " =~ " $file " ]]; then
         files_to_remove+=("$file")
     fi
@@ -305,4 +305,3 @@ for folder in "${folders[@]}"; do
 done
 
 echo -e "${GREEN}Done. You may exit now.${RESET}"
-
