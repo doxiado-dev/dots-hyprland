@@ -148,7 +148,7 @@ export const oskLayouts = {
                 { keytype: "normal", label: "9", labelShift: ")", shape: "normal", keycode: 10 },
                 { keytype: "normal", label: "0", labelShift: "=", shape: "normal", keycode: 11 },
                 { keytype: "normal", label: "'", labelShift: "?", shape: "normal", keycode: 12 },
-                { keytype: "normal", label: "¡", labelShift: "¿", shape: "normal", keycode: 13 },
+                { keytype: "normal", label: "¿", labelShift: "¡", shape: "normal", keycode: 13 },
                 { keytype: "normal", label: "Backspace", shape: "expand", keycode: 14 }
             ],
             [
