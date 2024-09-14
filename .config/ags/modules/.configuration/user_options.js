@@ -204,6 +204,9 @@ let configOptions = {
     // Modes: "normal", "focus" (workspace indicator only), "nothing"
     // Example for four monitors: ["normal", "focus", "normal", "nothing"]
     monitors: ["normal"],
+    // Change Order to reorder, remove to hide
+    // Options: "snip", "picker", "keyboard"
+    utilities: ["picker"],
   },
   keybinds: {
     // Format: Mod1+Mod2+key. CaSe SeNsItIvE!

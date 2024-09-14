@@ -565,17 +565,44 @@ const UtilButton = ({ name, icon, onClicked }) =>
     label: `${icon}`,
   });
 
-const Utilities = () =>
-  Widget.Box({
+const Utilities = () => {
+  const availableUtilities = {
+    snip: {
+      name: "Screen snip",
+      icon: "screenshot_region",
+      onClicked: () => {
+        Utils.execAsync(`${App.configDir}/scripts/grimblast.sh copy area`).catch(print);
+      },
+    },
+    picker: {
+      name: "Color picker",
+      icon: "colorize",
+      onClicked: () => {
+        Utils.execAsync(["hyprpicker", "-a"]).catch(print);
+      },
+    },
+    keyboard: {
+      name: "Toggle on-screen keyboard",
+      icon: "keyboard",
+      onClicked: () => {
+        toggleWindowOnAllMonitors("osk");
+      },
+    },
+  };
+
+  const utilityButtons = userOptions.bar.utilities
+    .filter((utility) => availableUtilities[utility])
+    .map((utility) =>
+      UtilButton({
+        name: availableUtilities[utility].name,
+        icon: availableUtilities[utility].icon,
+        onClicked: availableUtilities[utility].onClicked,
+      })
+    );
+
+  return Widget.Box({
     hpack: "center",
     className: "spacing-h-4",
-    children: [
-      UtilButton({
-        name: "Color picker",
-        icon: "colorize",
-        onClicked: () => {
-          Utils.execAsync(["hyprpicker", "-a"]).catch(print);
-        },
-      }),
-    ],
+    children: utilityButtons,
   });
+};
