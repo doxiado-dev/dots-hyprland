@@ -77,7 +77,7 @@
 
 * [Topbar](https://r2.e-z.host/9e3dd702-42ab-4d6b-a8a0-b1a4ab53af33/nelevl6h.png) that has a GNOME style and is small monitor friendly
 * [E-Z](https://e-z.host) Screenshots & Recording integraton on default
-* No Booru & Waifu APIs on sideright module
+* Some Extra Modifications
 * Dock Functionality with No Pin icon
 * Shortcuts
 * LATAM Keyboard
