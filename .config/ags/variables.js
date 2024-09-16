@@ -80,3 +80,6 @@ globalThis['closeEverything'] = () => {
     App.closeWindow('sideright');
     App.closeWindow('overview');
 };
+
+export const showSessionWindow = Variable(false, {});
+globalThis['showSessionWindow'] = showSessionWindow;
