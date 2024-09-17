@@ -30,6 +30,16 @@ case $p in
   a)exit 1;;
   *)ask=true;;
 esac
+printf "\e[34mWould you like to create a backup for \"$XDG_CONFIG_HOME\" and \"$HOME/.local/\" folders?\n[y/N]: \e[0m"
+read -p " " backup_confirm
+case $backup_confirm in
+    [yY][eE][sS]|[yY])
+        backup_configs
+        ;;
+    *)
+        echo "Skipping backup..."
+        ;;
+esac
 }
 
 case $ask in
@@ -91,17 +101,16 @@ v set-explicit-to-implicit
 # https://github.com/end-4/dots-hyprland/issues/581
 # yay -Bi is kinda hit or miss, instead cd into the relevant directory and manually source and install deps
 install-local-pkgbuild() {
-    local location=$1
-    local installflags=$2
+	local location=$1
+	local installflags=$2
 
-    pushd "$location" > /dev/null || { echo "Failed to change directory to $location"; exit 1; }
+	x pushd $location
 
-    source PKGBUILD
+	source ./PKGBUILD
+	x yay -S $installflags --asdeps "${depends[@]}"
+	x makepkg -si --noconfirm
 
-    yay -S $installflags --asdeps "${depends[@]}" || { echo "Failed to install package"; popd > /dev/null; return 1; }
-    makepkg -si --noconfirm || { echo "Failed to build package"; popd > /dev/null; return 1; }
-
-    popd > /dev/null
+	x popd
 }
 
 # Install core dependencies from the meta-packages
@@ -258,6 +267,9 @@ v gsettings set org.gnome.desktop.interface cursor-size 24
 
 # Avoid the "Packages aren't on the AUR" message
 sudo sed -i -e '/^#IgnorePkg\\s*=/s/^#\\s*IgnorePkg\\s*=.*/IgnorePkg = illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/' /etc/pacman.conf && sudo sed -i -e '/^IgnorePkg\\s*=/{/illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/!s/^\\(IgnorePkg\\s*=\\s*\\)\\(.*\\)/\\1\\2 illogical-impulse-ags illogical-impulse-audio illogical-impulse-backlight illogical-impulse-basic illogical-impulse-fonts-themes illogical-impulse-gnome illogical-impulse-gtk illogical-impulse-microtex-git illogical-impulse-portal illogical-impulse-pymyc-aur illogical-impulse-python illogical-impulse-screencapture illogical-impulse-widgets/}' /etc/pacman.conf
+
+## Ignore Systemd's power button action this is so we can remap it use ags session manager
+sudo sed -i -e '/^\[Login\]/,/\[.*\]/ { /HandlePowerKey=/! { N; /HandlePowerKey=ignore/! { s/\(.*\)\(HandlePowerKey=.*\)\(.*\)/\1HandlePowerKey=ignore\3/; }} }' /etc/systemd/logind.conf
 
 # Prevent hyprland from not fully loaded
 sleep 1
