@@ -535,6 +535,16 @@ const WeatherWidget = () =>
       }),
   });
 
+const VPNIndicator = () => Widget.Revealer({
+    child: MaterialIcon('lock', 'norm'),
+    transition: 'slide_left',
+    revealChild: false,
+    transitionDuration: userOptions.animations.durationSmall,
+    setup: (self) => self.hook(Network.vpn, (self) => {
+        self.revealChild = (Network.vpn.activatedConnections.length > 0);
+    })
+});
+
 export const StatusIcons = (props = {}, monitor = 0) =>
   Widget.Box({
     ...props,
@@ -552,6 +562,7 @@ export const StatusIcons = (props = {}, monitor = 0) =>
         ...(userOptions.weather.enabled ? [WeatherWidget()] : []),
         Utilities(),
         BarGroup({ child: BarBattery() }),
+        ...(userOptions.bar.vpn ? [VPNIndicator()] : []),
       ],
     }),
   });

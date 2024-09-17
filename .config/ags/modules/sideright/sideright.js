@@ -26,6 +26,7 @@ import { getDistroIcon } from '../.miscutils/system.js';
 import { MaterialIcon } from '../.commonwidgets/materialicon.js';
 import { ExpandingIconTabContainer } from '../.commonwidgets/tabcontainer.js';
 import { checkKeybind } from '../.widgetutils/keybind.js';
+import ModuleVPN from "./centermodules/vpn.js";
 
 const centerWidgets = [
     {
@@ -54,6 +55,11 @@ const centerWidgets = [
         materialIcon: 'tune',
         contentWidget: ModuleConfigure,
     },
+    ...(userOptions.bar.vpn ? [{
+        name: "VPN",
+        materialIcon: 'lock',
+        contentWidget: ModuleVPN,
+    }] : []),
 ];
 
 const timeRow = Box({

@@ -40,6 +40,7 @@ let configOptions = {
     settings: 'XDG_CURRENT_DESKTOP="gnome" gnome-control-center',
     taskManager: "gnome-system-monitor",
     terminal: "foot", // This is only for shell actions
+    'vpn': "XDG_CURRENT_DESKTOP=\"gnome\" gnome-control-center network",
   },
   battery: {
     low: 20,
@@ -208,6 +209,7 @@ let configOptions = {
     // Change Order to reorder, remove to hide
     // Options: "snip", "picker", "keyboard"
     utilities: ["picker"],
+    vpn: false, // true to enable
   },
   keybinds: {
     // Format: Mod1+Mod2+key. CaSe SeNsItIvE!
