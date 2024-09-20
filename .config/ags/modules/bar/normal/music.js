@@ -80,6 +80,97 @@ const BarResource = (name, icon, command, circprogClassName = 'bar-batt-circprog
     return widget;
 }
 
+const NetworkSpeed = () => {
+    if (!userOptions.bar.network.enabled) return null;
+
+    const uploadCircProg = AnimatedCircProg({
+        className: 'bar-net-circprog',
+        vpack: 'center',
+        hpack: 'center',
+    });
+    const downloadCircProg = AnimatedCircProg({
+        className: 'bar-net-circprog',
+        vpack: 'center',
+        hpack: 'center',
+    });
+
+    const uploadProgress = Box({
+        homogeneous: true,
+        children: [Overlay({
+            child: Box({
+                vpack: 'center',
+                className: 'bar-net-icon',
+                homogeneous: true,
+                children: [
+                    MaterialIcon('upload', 'small'),
+                ],
+            }),
+            overlays: [uploadCircProg]
+        })],
+    });
+
+    const downloadProgress = Box({
+        homogeneous: true,
+        children: [Overlay({
+            child: Box({
+                vpack: 'center',
+                className: 'bar-net-icon',
+                homogeneous: true,
+                children: [
+                    MaterialIcon('download', 'small'),
+                ],
+            }),
+            overlays: [downloadCircProg]
+        })],
+    });
+
+    const uploadLabel = Label({
+        className: 'txt-smallie txt-onSurfaceVariant',
+    });
+
+    const downloadLabel = Label({
+        className: 'txt-smallie txt-onSurfaceVariant',
+    });
+
+    const uploadBox = Box({
+        className: 'spacing-h-3',
+        children: [
+            uploadProgress,
+            userOptions.bar.network.hideText ? null : uploadLabel,
+        ],
+        setup: (self) => self.poll(2000, () => execAsync(['bash', '-c', "vnstat -tr 2 --json | jq -r '.tx.bytespersecond' | awk '{printf \"%.2f\", $1/1048576}'"])
+            .then((output) => {
+                uploadCircProg.css = `font-size: ${Number(output)}px;`;
+                uploadLabel.label = `${output.trim()} MB/s`;
+                self.tooltipText = `Upload: ${output.trim()} MB/s`;
+            }).catch(print))
+    });
+
+    const downloadBox = Box({
+        className: 'spacing-h-3',
+        children: [
+            downloadProgress,
+            userOptions.bar.network.hideText ? null : downloadLabel,
+        ],
+        setup: (self) => self.poll(2000, () => execAsync(['bash', '-c', "vnstat -tr 2 --json | jq -r '.rx.bytespersecond' | awk '{printf \"%.2f\", $1/1048576}'"])
+            .then((output) => {
+                downloadCircProg.css = `font-size: ${Number(output)}px;`;
+                downloadLabel.label = `${output.trim()} MB/s`;
+                self.tooltipText = `Download: ${output.trim()} MB/s`;
+            }).catch(print))
+    });
+
+    const widget = Button({
+        onClicked: () => Utils.execAsync(['bash', '-c', `${userOptions.apps.taskManager}`]).catch(print),
+        child: Box({
+            className: 'spacing-h-4 txt-onSurfaceVariant',
+            children: [uploadBox, downloadBox],
+        })
+    });
+
+    return BarGroup({ child: widget });
+};
+
 const SystemResourcesOrCustomModule = () => {
     // Check if $XDG_CACHE_HOME/ags/user/scripts/custom-module-poll.sh exists
     if (GLib.file_test(CUSTOM_MODULE_CONTENT_SCRIPT, GLib.FileTest.EXISTS)) {
@@ -120,6 +211,7 @@ const SystemResourcesOrCustomModule = () => {
 //                                'bar-swap-circprog', 'bar-swap-txt', 'bar-swap-icon'),
                             BarResource('CPU Usage', 'settings_motion_mode', `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
                                 'bar-cpu-circprog', 'bar-cpu-txt', 'bar-cpu-icon'),
+                            NetworkSpeed(),
                         ]
                     }),
                     setup: (self) => {

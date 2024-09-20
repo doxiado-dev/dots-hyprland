@@ -210,6 +210,10 @@ let configOptions = {
     // Options: "snip", "picker", "keyboard"
     utilities: ["picker"],
     vpn: false, // true to enable
+    network: {
+      enabled: false, 
+      hideText: true,
+    },
   },
   keybinds: {
     // Format: Mod1+Mod2+key. CaSe SeNsItIvE!
