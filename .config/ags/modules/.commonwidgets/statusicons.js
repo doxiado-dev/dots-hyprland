@@ -461,7 +461,7 @@ const BarBattery = () =>
 
 const WeatherWidget = () =>
   Widget.Box({
-    hexpand: true,
+    hexpand: userOptions.weather.spacing,
     hpack: "center",
     className: "spacing-h-4 txt-onSurfaceVariant",
     children: [
@@ -496,7 +496,13 @@ const WeatherWidget = () =>
                 ];
               const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
               self.children[0].label = weatherSymbol;
-              self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+              if (userOptions.weather.onlyIcon) {
+                self.children[1].label = "";
+              } else if (userOptions.weather.short) {
+                self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit}`;
+              } else {
+                self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+              }
               self.tooltipText = weatherDesc;
             })
             .catch((err) => {
@@ -515,7 +521,13 @@ const WeatherWidget = () =>
                   ];
                 const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
                 self.children[0].label = weatherSymbol;
-                self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+                if (userOptions.weather.onlyIcon) {
+                  self.children[1].label = "";
+                } else if (userOptions.weather.short) {
+                  self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit}`;
+                } else {
+                  self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+                }
                 self.tooltipText = weatherDesc;
               } catch (err) {
                 print(err);

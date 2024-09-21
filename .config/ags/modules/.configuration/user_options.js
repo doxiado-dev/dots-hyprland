@@ -145,6 +145,9 @@ let configOptions = {
     city: "",
     preferredUnit: "C", // Either C or F
     enabled: false,
+    onlyIcon: false, // only weather icon
+    short: true, // hides "feels like"
+    spacing: false, // toggle hexpand
   },
   workspaces: {
     shown: 6,
