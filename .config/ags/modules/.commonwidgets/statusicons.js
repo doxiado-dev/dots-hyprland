@@ -618,6 +618,7 @@ export const StatusIcons = (props = {}, monitor = 0) => {
     utilities: Utilities(),
     weather: WeatherWidget(),
     bluetooth: BluetoothIndicator(), // Added Bluetooth indicator
+    vpn: VPNIndicator(),
   };
 
   return Widget.Box({

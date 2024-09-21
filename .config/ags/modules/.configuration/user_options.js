@@ -218,6 +218,7 @@ let configOptions = {
       hideText: true,
     },
     indicators: [
+//    "vpn",
       "keyboardLayout",
 //    "weather",
       "notifications",

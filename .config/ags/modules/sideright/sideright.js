@@ -55,7 +55,7 @@ const centerWidgets = [
         materialIcon: 'tune',
         contentWidget: ModuleConfigure,
     },
-    ...(userOptions.bar.vpn ? [{
+    ...(userOptions.bar.indicators.includes('vpn') ? [{
         name: "VPN",
         materialIcon: 'lock',
         contentWidget: ModuleVPN,
