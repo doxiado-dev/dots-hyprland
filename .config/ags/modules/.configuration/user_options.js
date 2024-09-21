@@ -144,7 +144,6 @@ let configOptions = {
   weather: {
     city: "",
     preferredUnit: "C", // Either C or F
-    enabled: false,
     onlyIcon: false, // only weather icon
     short: true, // hides "feels like"
     spacing: false, // toggle hexpand
@@ -218,6 +217,15 @@ let configOptions = {
     network: {
       hideText: true,
     },
+    indicators: [
+      "keyboardLayout",
+//    "weather",
+      "notifications",
+      "network",
+      "bluetooth",
+      "utilities",
+      "battery",
+    ],
   },
   keybinds: {
     // Format: Mod1+Mod2+key. CaSe SeNsItIvE!

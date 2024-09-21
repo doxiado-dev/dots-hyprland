@@ -557,37 +557,6 @@ const VPNIndicator = () => Widget.Revealer({
     })
 });
 
-export const StatusIcons = (props = {}, monitor = 0) =>
-  Widget.Box({
-    ...props,
-    child: Widget.Box({
-      className: "spacing-h-15",
-      children: [
-        MicMuteIndicator(),
-        optionalKeyboardLayoutInstances[monitor],
-        NotificationIndicator(),
-        NetworkIndicator(),
-        Widget.Box({
-          className: "spacing-h-5",
-          children: [BluetoothIndicator(true), BluetoothDevices()],
-        }),
-        ...(userOptions.weather.enabled ? [WeatherWidget()] : []),
-        Utilities(),
-        BarGroup({ child: BarBattery() }),
-        ...(userOptions.bar.vpn ? [VPNIndicator()] : []),
-      ],
-    }),
-  });
-
-const UtilButton = ({ name, icon, onClicked }) =>
-  Widget.Button({
-    vpack: "center",
-    tooltipText: name,
-    onClicked: onClicked,
-    className: "bar-util-btn icon-material txt-norm",
-    label: `${icon}`,
-  });
-
 const Utilities = () => {
   const availableUtilities = {
     snip: {
@@ -627,5 +596,37 @@ const Utilities = () => {
     hpack: "center",
     className: "spacing-h-4",
     children: utilityButtons,
+  });
+};
+
+const UtilButton = ({ name, icon, onClicked }) =>
+  Widget.Button({
+    vpack: "center",
+    tooltipText: name,
+    onClicked: onClicked,
+    className: "bar-util-btn icon-material txt-norm",
+    label: `${icon}`,
+  });
+
+export const StatusIcons = (props = {}, monitor = 0) => {
+  const indicators = {
+    micMute: MicMuteIndicator(),
+    keyboardLayout: optionalKeyboardLayoutInstances[monitor],
+    notifications: NotificationIndicator(),
+    network: NetworkIndicator(),
+    battery: BarGroup({ child: BarBattery() }),
+    utilities: Utilities(),
+    weather: WeatherWidget(),
+    bluetooth: BluetoothIndicator(), // Added Bluetooth indicator
+  };
+
+  return Widget.Box({
+    ...props,
+    child: Widget.Box({
+      className: "spacing-h-15",
+      children: userOptions.bar.indicators
+        .filter((indicator) => indicators[indicator])
+        .map((indicator) => indicators[indicator]),
+    }),
   });
 };
