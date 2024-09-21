@@ -220,8 +220,8 @@ let configOptions = {
     indicators: [
       //    "vpn",
       "keyboardLayout",
-      "weather",
       "notifications",
+      "weather",
       "network",
       "bluetooth",
       "utilities",
