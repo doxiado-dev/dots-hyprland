@@ -459,8 +459,22 @@ const BarBattery = () =>
     ],
   });
 
-const WeatherWidget = () =>
-  Widget.Box({
+const WeatherWidget = () => {
+  const updateWeatherDisplay = (self, weather, weatherSymbol, temperature, feelsLike, weatherDesc) => {
+    self.children[0].label = weatherSymbol;
+    if (userOptions.bar.bluetooth.weatherIconOnlyOnConnect && Bluetooth.connected_devices.length > 0) {
+      self.children[1].label = "";
+    } else if (userOptions.weather.onlyIcon) {
+      self.children[1].label = "";
+    } else if (userOptions.weather.short) {
+      self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit}`;
+    } else {
+      self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
+    }
+    self.tooltipText = weatherDesc;
+  };
+
+  return Widget.Box({
     hexpand: userOptions.weather.spacing,
     hpack: "center",
     className: "spacing-h-4 txt-onSurfaceVariant",
@@ -470,19 +484,35 @@ const WeatherWidget = () =>
         label: "Weather",
       }),
     ],
-    setup: (self) =>
-      self.poll(900000, async (self) => {
-        const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
-        const updateWeatherForCity = (city) =>
-          Utils.execAsync(
-            `curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`,
-          )
-            .then((output) => {
-              const weather = JSON.parse(output);
-              Utils.writeFile(
-                JSON.stringify(weather),
-                WEATHER_CACHE_PATH,
-              ).catch(print);
+    setup: (self) => {
+      const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
+      const updateWeatherForCity = (city) =>
+        Utils.execAsync(
+          `curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`,
+        )
+          .then((output) => {
+            const weather = JSON.parse(output);
+            Utils.writeFile(
+              JSON.stringify(weather),
+              WEATHER_CACHE_PATH,
+            ).catch(print);
+            const weatherCode = weather.current_condition[0].weatherCode;
+            const weatherDesc =
+              weather.current_condition[0].weatherDesc[0].value;
+            const temperature =
+              weather.current_condition[0][
+                `temp_${userOptions.weather.preferredUnit}`
+              ];
+            const feelsLike =
+              weather.current_condition[0][
+                `FeelsLike${userOptions.weather.preferredUnit}`
+              ];
+            const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
+            updateWeatherDisplay(self, weather, weatherSymbol, temperature, feelsLike, weatherDesc);
+          })
+          .catch((err) => {
+            try {
+              const weather = JSON.parse(Utils.readFile(WEATHER_CACHE_PATH));
               const weatherCode = weather.current_condition[0].weatherCode;
               const weatherDesc =
                 weather.current_condition[0].weatherDesc[0].value;
@@ -495,44 +525,26 @@ const WeatherWidget = () =>
                   `FeelsLike${userOptions.weather.preferredUnit}`
                 ];
               const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
-              self.children[0].label = weatherSymbol;
-              if (userOptions.weather.onlyIcon) {
-                self.children[1].label = "";
-              } else if (userOptions.weather.short) {
-                self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit}`;
-              } else {
-                self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
-              }
-              self.tooltipText = weatherDesc;
-            })
-            .catch((err) => {
-              try {
-                const weather = JSON.parse(Utils.readFile(WEATHER_CACHE_PATH));
-                const weatherCode = weather.current_condition[0].weatherCode;
-                const weatherDesc =
-                  weather.current_condition[0].weatherDesc[0].value;
-                const temperature =
-                  weather.current_condition[0][
-                    `temp_${userOptions.weather.preferredUnit}`
-                  ];
-                const feelsLike =
-                  weather.current_condition[0][
-                    `FeelsLike${userOptions.weather.preferredUnit}`
-                  ];
-                const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
-                self.children[0].label = weatherSymbol;
-                if (userOptions.weather.onlyIcon) {
-                  self.children[1].label = "";
-                } else if (userOptions.weather.short) {
-                  self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit}`;
-                } else {
-                  self.children[1].label = `${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
-                }
-                self.tooltipText = weatherDesc;
-              } catch (err) {
-                print(err);
-              }
-            });
+              updateWeatherDisplay(self, weather, weatherSymbol, temperature, feelsLike, weatherDesc);
+            } catch (err) {
+              print(err);
+            }
+          });
+
+      if (
+        userOptions.weather.city != "" &&
+        userOptions.weather.city != null
+      ) {
+        updateWeatherForCity(userOptions.weather.city.replace(/ /g, "%20"));
+      } else {
+        Utils.execAsync("curl ipinfo.io")
+          .then((output) => JSON.parse(output)["city"].toLowerCase())
+          .then(updateWeatherForCity)
+          .catch(print);
+      }
+
+      self.hook(Bluetooth, () => {
+        // Re-fetch weather data to update the display based on Bluetooth connection status
         if (
           userOptions.weather.city != "" &&
           userOptions.weather.city != null
@@ -544,8 +556,10 @@ const WeatherWidget = () =>
             .then(updateWeatherForCity)
             .catch(print);
         }
-      }),
+      }, "notify::connected-devices");
+    },
   });
+};
 
 const VPNIndicator = () => Widget.Revealer({
     child: MaterialIcon('lock', 'norm'),
@@ -618,7 +632,7 @@ export const StatusIcons = (props = {}, monitor = 0) => {
     utilities: Utilities(),
     weather: WeatherWidget(),
     bluetooth: BluetoothIndicator(),
-        bluetoothDevices: BluetoothDevices(),
+    bluetoothDevices: BluetoothDevices(),
     vpn: VPNIndicator(),
   };
 

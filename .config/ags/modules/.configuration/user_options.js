@@ -144,7 +144,7 @@ let configOptions = {
   weather: {
     city: "",
     preferredUnit: "C", // Either C or F
-    onlyIcon: true, // only weather icon
+    onlyIcon: false, // only weather icon
     short: true, // hides "feels like"
     spacing: false, // toggle hexpand
   },
@@ -231,6 +231,7 @@ let configOptions = {
     bluetooth: {
       hideonconnect: true, // hide icon if devices are connected
       noPercentage: false, // hide battery percentage
+      weatherIconOnlyOnConnect: true, // change weather display based on Bluetooth connection
     },
   },
   keybinds: {
