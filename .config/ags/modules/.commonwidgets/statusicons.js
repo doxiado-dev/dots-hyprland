@@ -98,7 +98,7 @@ export const NotificationIndicator = (notifCenterName = "sideright") => {
   return widget;
 };
 
-export const BluetoothIndicator = () =>
+export const BluetoothIndicator = ({ isSidebar = false } = {}) =>
   Widget.Stack({
     transition: "slide_up_down",
     transitionDuration: userOptions.animations.durationSmall,
@@ -116,7 +116,9 @@ export const BluetoothIndicator = () =>
       self.hook(Bluetooth, (stack) => {
         setTimeout(() => {
           stack.shown = String(Bluetooth.enabled);
-          stack.visible = !(Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
+          if (!isSidebar) {
+            stack.visible = !(Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
+          }
         }, 500);
       }),
   });

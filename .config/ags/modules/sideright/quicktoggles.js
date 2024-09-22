@@ -54,7 +54,7 @@ export const ToggleIconBluetooth = (props = {}) =>
       execAsync(["bash", "-c", `${userOptions.apps.bluetooth}`]).catch(print);
       closeEverything();
     },
-    child: BluetoothIndicator(),
+    child: BluetoothIndicator({ isSidebar: true }), // Pass isSidebar prop
     setup: (self) => {
       setupCursorHover(self);
       self.hook(Bluetooth, (button) => {
