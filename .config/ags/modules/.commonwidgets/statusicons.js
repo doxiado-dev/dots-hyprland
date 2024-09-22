@@ -114,12 +114,10 @@ export const BluetoothIndicator = ({ isSidebar = false } = {}) =>
     },
     setup: (self) =>
       self.hook(Bluetooth, (stack) => {
-        setTimeout(() => {
-          stack.shown = String(Bluetooth.enabled);
-          if (!isSidebar) {
-            stack.visible = !(Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
-          }
-        }, 500);
+        stack.shown = String(Bluetooth.enabled);
+        if (!isSidebar && userOptions.bar.bluetooth.hideonconnect) {
+          stack.visible = !(Bluetooth.connected_devices.length > 0);
+        }
       }),
   });
 
@@ -137,7 +135,7 @@ const BluetoothDevices = () =>
               tooltipText: device.name,
               children: [
                 Widget.Icon(`${device.iconName}-symbolic`),
-                ...(device.batteryPercentage
+                ...(device.batteryPercentage && !userOptions.bar.bluetooth.noPercentage
                   ? [
                       Widget.Label({
                         className: "txt-smallie",
