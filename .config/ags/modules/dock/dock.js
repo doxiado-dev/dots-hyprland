@@ -139,6 +139,8 @@ function handleScroll(button, direction) {
   }
 }
 
+let preventAutoHide = false;
+
 const Taskbar = (monitor) =>
   Widget.Box({
     className: "dock-apps",
@@ -172,13 +174,33 @@ const Taskbar = (monitor) =>
           if (path === "") {
             path = substitute(appClass);
           }
-          const newButton = AppButton({
-            icon: path,
-            tooltipText: `${client.title} (${appClass})`,
-            onClicked: () => focus(client),
+          const newButton = EventBox({
+            child: AppButton({
+              icon: path,
+              tooltipText: `${client.title} (${appClass})`,
+              onClicked: () => focus(client),
+            }),
+            setup: (self) => {
+              let holdTimeout;
+              self.on("button-press-event", (widget, event) => {
+                if (event.get_button()[1] === 3) {
+                  holdTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
+                    preventAutoHide = true;
+                    Hyprland.messageAsync(`dispatch closewindow address:${client.address}`).catch(print);
+                    return GLib.SOURCE_REMOVE;
+                  });
+                }
+              });
+              self.on("button-release-event", (widget, event) => {
+                if (event.get_button()[1] === 3 && holdTimeout) {
+                  GLib.source_remove(holdTimeout);
+                  preventAutoHide = false;
+                }
+              });
+            },
           });
-          newButton.attribute.workspace = client.workspace.id;
-          newButton.revealChild = true;
+          newButton.child.attribute.workspace = client.workspace.id;
+          newButton.child.revealChild = true;
           box.attribute.map.set(client.address, newButton);
         }
         box.children = Array.from(box.attribute.map.values());
@@ -215,22 +237,42 @@ const Taskbar = (monitor) =>
         if (path === "") {
           path = substitute(appClass);
         }
-        const newButton = AppButton({
-          icon: path,
-          tooltipText: `${newClient.title} (${appClass})`,
-          onClicked: () => focus(newClient),
+        const newButton = EventBox({
+          child: AppButton({
+            icon: path,
+            tooltipText: `${newClient.title} (${appClass})`,
+            onClicked: () => focus(newClient),
+          }),
+          setup: (self) => {
+            let holdTimeout;
+            self.on("button-press-event", (widget, event) => {
+              if (event.get_button()[1] === 3) {
+                holdTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
+                  preventAutoHide = true;
+                  Hyprland.messageAsync(`dispatch closewindow address:${newClient.address}`).catch(print);
+                  return GLib.SOURCE_REMOVE;
+                });
+              }
+            });
+            self.on("button-release-event", (widget, event) => {
+              if (event.get_button()[1] === 3 && holdTimeout) {
+                GLib.source_remove(holdTimeout);
+                preventAutoHide = false;
+              }
+            });
+          },
         });
-        newButton.attribute.workspace = newClient.workspace.id;
+        newButton.child.attribute.workspace = newClient.workspace.id;
         box.attribute.map.set(address, newButton);
         box.children = Array.from(box.attribute.map.values());
-        newButton.revealChild = true;
+        newButton.child.revealChild = true;
       },
       remove: (box, address) => {
         if (!address) return;
 
         const removedButton = box.attribute.map.get(address);
         if (!removedButton) return;
-        removedButton.revealChild = false;
+        removedButton.child.revealChild = false;
 
         Utils.timeout(userOptions.animations.durationLarge, () => {
           removedButton.destroy();
@@ -343,7 +385,7 @@ export default (monitor = 0) => {
 
         if (hidden) {
           let id = Utils.timeout(hidden.interval, () => {
-            if (!isPinned) {
+            if (!isPinned && !preventAutoHide) {
               self.revealChild = false;
             }
             timers = timers.filter((e) => e !== id);
