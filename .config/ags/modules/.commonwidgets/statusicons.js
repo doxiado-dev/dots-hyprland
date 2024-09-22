@@ -98,7 +98,7 @@ export const NotificationIndicator = (notifCenterName = "sideright") => {
   return widget;
 };
 
-export const BluetoothIndicator = (isTopbar = false) =>
+export const BluetoothIndicator = () =>
   Widget.Stack({
     transition: "slide_up_down",
     transitionDuration: userOptions.animations.durationSmall,
@@ -116,7 +116,7 @@ export const BluetoothIndicator = (isTopbar = false) =>
       self.hook(Bluetooth, (stack) => {
         setTimeout(() => {
           stack.shown = String(Bluetooth.enabled);
-          stack.visible = !(isTopbar && Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
+          stack.visible = !(Bluetooth.connected_devices.length > 0); // Hide icon if on topbar and devices are connected
         }, 500);
       }),
   });
@@ -617,7 +617,8 @@ export const StatusIcons = (props = {}, monitor = 0) => {
     battery: BarGroup({ child: BarBattery() }),
     utilities: Utilities(),
     weather: WeatherWidget(),
-    bluetooth: BluetoothIndicator(), // Added Bluetooth indicator
+    bluetooth: BluetoothIndicator(),
+        bluetoothDevices: BluetoothDevices(),
     vpn: VPNIndicator(),
   };
 

@@ -224,6 +224,7 @@ let configOptions = {
       "weather",
       "network",
       "bluetooth",
+      "bluetoothDevices",
       "utilities",
       "battery",
     ],
