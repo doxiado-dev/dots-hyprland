@@ -623,7 +623,7 @@ export const StatusIcons = (props = {}, monitor = 0) => {
     utilities: Utilities(),
     weather: WeatherWidget(),
     bluetooth: BluetoothIndicator(),
-    bluetoothDevices: BluetoothDevices(),
+    bluetoothDevices: Bluetooth.connected_devices.length === 0 ? null : BluetoothDevices(),
     vpn: VPNIndicator(),
   };
 
