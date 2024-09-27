@@ -213,7 +213,6 @@ let configOptions = {
     utilities: ["picker"],
     // Options: "ram", "cpu", "network", "swap"
     systemResources: ["ram", "cpu"],
-    vpn: false, // true to enable
     network: {
       hideText: true,
     },
