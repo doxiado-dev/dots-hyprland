@@ -124,6 +124,7 @@ export const BluetoothIndicator = ({ isSidebar = false } = {}) =>
 const BluetoothDevices = () =>
   Widget.Box({
     className: "spacing-h-5",
+    visible: Bluetooth.connected_devices.length > 0,
     setup: (self) =>
       self.hook(
         Bluetooth,
@@ -623,7 +624,7 @@ export const StatusIcons = (props = {}, monitor = 0) => {
     utilities: Utilities(),
     weather: WeatherWidget(),
     bluetooth: BluetoothIndicator(),
-    bluetoothDevices: Bluetooth.connected_devices.length === 0 ? null : BluetoothDevices(),
+    bluetoothDevices: BluetoothDevices(),
     vpn: VPNIndicator(),
   };
 
