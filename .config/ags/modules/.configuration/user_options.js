@@ -39,6 +39,7 @@ let configOptions = {
     network: 'XDG_CURRENT_DESKTOP="gnome" gnome-control-center wifi',
     settings: 'XDG_CURRENT_DESKTOP="gnome" gnome-control-center',
     taskManager: "gnome-system-monitor",
+    // taskManager: "foot --title 'btop' -- fish -c 'btop'",
     terminal: "foot", // This is only for shell actions
     vpn: 'XDG_CURRENT_DESKTOP="gnome" gnome-control-center network',
   },
