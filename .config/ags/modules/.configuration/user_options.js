@@ -54,6 +54,9 @@ let configOptions = {
       "PLUG THE CHARGER ALREADY",
     ],
     suspendThreshold: 5,
+    suspendDelay: 30,
+    preventWakeUp: false, // prevent wake up until battery is above suspend threshold
+    disableNotification: false, // disable Woke up from Suspension notification
   },
   brightness: {
     // Object of controller names for each monitor, either "brightnessctl" or "ddcutil" or "auto"

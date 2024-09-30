@@ -15,11 +15,31 @@ const FIRST_RUN_NOTIF_TITLE = "Welcome!";
 const FIRST_RUN_NOTIF_BODY = `First run? 👀 <span foreground="#FF0202" font_weight="bold">CTRL+SUPER+T</span> to pick a wallpaper (or styles will break!)\nFor a list of keybinds, hit <span foreground="#c06af1" font_weight="bold">Super + /</span>.`;
 
 var batteryWarned = false;
+var batterySuspended = false;
+var systemSuspended = false;
+
 async function batteryMessage() {
     const perc = Battery.percent;
     const charging = Battery.charging;
+
+    if (systemSuspended === true && !userOptions.battery.disableNotification) {
+        Utils.execAsync(['bash', '-c',
+            `(notify-send "Woke up from Suspension" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t 69420) &`
+        ]).catch(print);
+        systemSuspended = false;
+    }
+
     if (charging) {
         batteryWarned = false;
+        batterySuspended = false;
+        return;
+    }
+    if (userOptions.battery.preventWakeUp && batterySuspended) {
+        const wakeupsuspendMessage = "Suspending system immediately";
+        Utils.execAsync(['bash', '-c',
+            `(notify-send "${wakeupsuspendMessage}" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t 69420) &`
+        ]).catch(print);
+        Utils.execAsync(['bash', '-c', `systemctl suspend`]).catch(print);
         return;
     }
     for (let i = userOptions.battery.warnLevels.length - 1; i >= 0; i--) {
@@ -31,11 +51,21 @@ async function batteryMessage() {
             break;
         }
     }
-    if (perc <= userOptions.battery.suspendThreshold) {
+    if (perc <= userOptions.battery.suspendThreshold && !batterySuspended) {
+        batterySuspended = true;
+        const suspendMessage = userOptions.battery.suspendDelay > 0 
+            ? `Suspending system in ${userOptions.battery.suspendDelay} seconds` 
+            : "Suspending system immediately";
         Utils.execAsync(['bash', '-c',
-            `notify-send "Suspending system" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t 69420 &`
+            `(notify-send "${suspendMessage}" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t ${userOptions.battery.suspendDelay * 1000}) &`
         ]).catch(print);
-        Utils.execAsync('systemctl suspend').catch(print);
+        Utils.execAsync(['bash', '-c', `sleep ${userOptions.battery.suspendDelay}; if !upower -i $(upower -e | grep 'BAT') | grep -q 'state: charging'; then systemctl suspend; fi`])
+            .then(() => {
+                if (!userOptions.battery.preventWakeUp && !Battery.charging && perc <= userOptions.battery.suspendThreshold) { // Added check for charging state and battery percentage
+                    systemSuspended = true;
+                }
+            })
+            .catch(print);
     }
 }
 
@@ -51,7 +81,7 @@ export async function firstRunWelcome() {
         Utils.writeFile(FIRST_RUN_FILE_CONTENT, FIRST_RUN_PATH)
             .then(() => {
                 // Note that we add a little delay to make sure the cool circular progress works
-                Utils.execAsync(['hyprctl', 'keyword', 'bind', "Super,Slash,exec,ags -t cheatsheet"]).catch(print);
+                Utils.execAsync(['hyprctl', 'keyword', 'bind', "Super,H,exec,ags -t cheatsheet"]).catch(print);
                 Utils.execAsync(['bash', '-c',
                     `sleep 0.5; notify-send "Millis since epoch" "$(date +%s%N | cut -b1-13)"; sleep 0.5; notify-send '${FIRST_RUN_NOTIF_TITLE}' '${FIRST_RUN_NOTIF_BODY}' -a '${APP_NAME}' &`
                 ]).catch(print)
