@@ -125,41 +125,46 @@ const BluetoothDevices = () =>
   Widget.Box({
     className: "spacing-h-5",
     visible: Bluetooth.connected_devices.length > 0,
-    setup: (self) =>
+    setup: (self) => {
       self.hook(
         Bluetooth,
         (self) => {
-          self.children = Bluetooth.connected_devices.map((device) => {
-            return Widget.Box({
-              className: "bar-bluetooth-device spacing-h-5",
-              vpack: "center",
-              tooltipText: device.name,
-              children: [
-                Widget.Icon(`${device.iconName}-symbolic`),
-                ...(device.batteryPercentage && !userOptions.bar.bluetooth.noPercentage
-                  ? [
-                      Widget.Label({
-                        className: "txt-smallie",
-                        label: `${device.batteryPercentage}`,
-                        setup: (self) => {
-                          self.hook(
-                            device,
-                            (self) => {
-                              self.label = `${device.batteryPercentage}`;
-                            },
-                            "notify::batteryPercentage",
-                          );
-                        },
-                      }),
-                    ]
-                  : []),
-              ],
+          if (Bluetooth.connected_devices.length > 0) {
+            self.children = Bluetooth.connected_devices.map((device) => {
+              return Widget.Box({
+                className: "bar-bluetooth-device spacing-h-5",
+                vpack: "center",
+                tooltipText: device.name,
+                children: [
+                  Widget.Icon(`${device.iconName}-symbolic`),
+                  ...(device.batteryPercentage && !userOptions.bar.bluetooth.noPercentage
+                    ? [
+                        Widget.Label({
+                          className: "txt-smallie",
+                          label: `${device.batteryPercentage}`,
+                          setup: (self) => {
+                            self.hook(
+                              device,
+                              (self) => {
+                                self.label = `${device.batteryPercentage}`;
+                              },
+                              "notify::batteryPercentage",
+                            );
+                          },
+                        }),
+                      ]
+                    : []),
+                ],
+              });
             });
-          });
+          } else {
+            self.children = [];
+          }
           self.visible = Bluetooth.connected_devices.length > 0;
         },
         "notify::connected-devices",
-      ),
+      );
+    },
   });
 
 const NetworkWiredIndicator = () =>
