@@ -13,7 +13,8 @@ import {
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { sidebarOptionsStack } from "./sideright.js";
-import { showSessionWindow } from '../../variables.js';
+import { showSessionWindow } from "../../variables.js";
+import configOptions from "../.configuration/user_options.js"; // Import the config options
 
 export const ToggleIconWifi = (props = {}) =>
   Widget.Button({
@@ -105,7 +106,7 @@ export const HyprToggleIcon = async (
 };
 
 export const ModuleNightLight = async (props = {}) => {
-  if (!exec(`bash -c 'command -v gammastep -O 3750K'`)) return null;
+  if (!exec(`bash -c 'command -v gammastep'`)) return null;
   return Widget.Button({
     attribute: {
       enabled: false,
@@ -115,8 +116,14 @@ export const ModuleNightLight = async (props = {}) => {
     onClicked: (self) => {
       self.attribute.enabled = !self.attribute.enabled;
       self.toggleClassName("sidebar-button-active", self.attribute.enabled);
-      if (self.attribute.enabled) Utils.execAsync("gammastep").catch(print);
-      else
+      if (self.attribute.enabled) {
+        const temperature = configOptions.appearance.gammastepTemperature;
+        if (temperature) {
+          Utils.execAsync(`gammastep -O ${temperature}K`).catch(print);
+        } else {
+          Utils.execAsync("gammastep").catch(print);
+        }
+      } else
         Utils.execAsync("pkill gammastep")
           .then(() => {
             // disable the button until fully terminated to avoid race
