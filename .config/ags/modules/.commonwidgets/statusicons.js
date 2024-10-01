@@ -164,10 +164,16 @@ const BluetoothDevices = () => {
       updateBluetoothDevices(self);
       self.hook(Bluetooth, () => {
         updateBluetoothDevices(self);
-        const fastIntervalId = setInterval(() => updateBluetoothDevices(self), 250);
-        setTimeout(() => clearInterval(fastIntervalId), 500);
-        const intervalId = setInterval(() => updateBluetoothDevices(self), 650);
-        setTimeout(() => clearInterval(intervalId), 2600);
+        const updateIntervals = [250, 650, 2600];
+        const updateDeviceStatus = (intervals) => {
+          if (intervals.length === 0) return;
+          const [interval, ...rest] = intervals;
+          setTimeout(() => {
+            updateBluetoothDevices(self);
+            updateDeviceStatus(rest);
+          }, interval);
+        };
+        updateDeviceStatus(updateIntervals);
       }, "notify::connected-devices");
     },
   });
