@@ -1,7 +1,7 @@
 // This is for the right pills of the bar.
 import Widget from "resource:///com/github/Aylur/ags/widget.js";
 import * as Utils from "resource:///com/github/Aylur/ags/utils.js";
-import { showMusicControls } from '../../../variables.js';
+import { showMusicControls } from "../../../variables.js";
 const { Box, Label, Button, Overlay, Revealer, Scrollable, Stack, EventBox } =
   Widget;
 const { exec, execAsync } = Utils;
@@ -23,14 +23,16 @@ const BarClock = () =>
     children: [
       Widget.Label({
         className: "txt-smallie bar-date",
-        label: GLib.DateTime.new_now_local().format(
-          userOptions.time.dateFormatLong,
-        ),
+        label: GLib.DateTime.new_now_local()
+          .format(userOptions.time.dateFormatLong)
+          .replace(/\u2007/g, "")
+          .trim(),
         setup: (self) =>
           self.poll(userOptions.time.dateInterval, (label) => {
-            label.label = GLib.DateTime.new_now_local().format(
-              userOptions.time.dateFormatLong,
-            );
+            label.label = GLib.DateTime.new_now_local()
+              .format(userOptions.time.dateFormatLong)
+              .replace(/\u2007/g, "")
+              .trim();
           }),
       }),
       Widget.Label({
@@ -86,12 +88,16 @@ export default () =>
       const rect = self.get_allocation();
       const clickX = self.get_pointer()[0];
       if (clickX > rect.width / 2) {
-        execAsync(['bash', '-c', 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`']).catch(print);
+        execAsync([
+          "bash",
+          "-c",
+          'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`',
+        ]).catch(print);
       } else {
-        execAsync('playerctl previous').catch(print);
+        execAsync("playerctl previous").catch(print);
       }
     },
-    onMiddleClick: () => execAsync('playerctl play-pause').catch(print),
+    onMiddleClick: () => execAsync("playerctl play-pause").catch(print),
     child: Widget.Box({
       className: "bar-group-margin bar-sides",
       children: [
