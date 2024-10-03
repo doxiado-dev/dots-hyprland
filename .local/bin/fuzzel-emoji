@@ -1,9 +1,11 @@
 #!/bin/bash
 if [ $? -eq 0 ]
 then
-    sed '1,/^### DATA ###$/d' $0 | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n' | wl-copy
+    emoji=$(sed '1,/^### DATA ###$/d' $0 | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n')
+    echo -n "$emoji" | wl-copy
 else
-    sed '1,/^### DATA ###$/d' $0 | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n' | wl-copy
+    emoji=$(sed '1,/^### DATA ###$/d' $0 | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n')
+    echo -n "$emoji" | wl-copy
 fi
 exit
 ### DATA ###
