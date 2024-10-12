@@ -83,3 +83,25 @@ globalThis['closeEverything'] = () => {
 
 export const showSessionWindow = Variable(false, {});
 globalThis['showSessionWindow'] = showSessionWindow;
+
+const isHyprlockRunning = async () => {
+    try {
+        const result = await execAsync('pgrep hyprlock');
+        return result.trim() !== '';
+    } catch {
+        return false;
+    }
+};
+
+globalThis['toggleSessionWindow'] = async () => {
+    const hyprlockRunning = await isHyprlockRunning();
+    if (!hyprlockRunning) {
+        showSessionWindow.value = !showSessionWindow.value;
+        if (showSessionWindow.value) {
+            closeEverything();
+            Utils.timeout(1, () => openWindowOnAllMonitors("session"));
+        } else {
+            closeWindowOnAllMonitors("session");
+        }
+    }
+};
