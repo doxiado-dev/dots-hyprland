@@ -13,7 +13,7 @@ depends=(
 	hyprlock-git
 	wlogout
 	wl-clipboard
+	vnstat
 	hyprpicker-git
 	anyrun-git
 )
-
