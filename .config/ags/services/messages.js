@@ -22,7 +22,7 @@ async function batteryMessage() {
     const perc = Battery.percent;
     const charging = Battery.charging;
 
-    if (systemSuspended === true && !userOptions.battery.disableNotification && !charging) {
+    if (systemSuspended === true && !userOptions.battery.disableNotification && !charging && Battery.wasCharging) {
         Utils.execAsync(['bash', '-c',
             `(notify-send "Woke up from Suspension" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t 69420) &`
         ]).catch(print);
