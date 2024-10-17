@@ -68,7 +68,7 @@ export default ({ id = 0 }) => {
     const hibernateButton = SessionButton('Hibernate', 'downloading', () => { closeWindowOnAllMonitors('session'); execAsync(['bash', '-c', 'systemctl hibernate || loginctl hibernate']).catch(print); showSessionWindow.value = false; }, {}, 4);
     const shutdownButton = SessionButton('Shutdown', 'power_settings_new', () => { closeWindowOnAllMonitors('session'); execAsync(['bash', '-c', 'systemctl poweroff || loginctl poweroff']).catch(print); showSessionWindow.value = false; }, {}, 5);
     const rebootButton = SessionButton('Reboot', 'restart_alt', () => { closeWindowOnAllMonitors('session'); execAsync(['bash', '-c', 'systemctl reboot || loginctl reboot']).catch(print); showSessionWindow.value = false; }, {}, 6);
-    const cancelButton = SessionButton('Cancel', 'close', () => { showSessionWindow.value = !showSessionWindow.value; if (showSessionWindow.value) { closeEverything(); Utils.timeout(1, () => openWindowOnAllMonitors("session")); } else { closeWindowOnAllMonitors("session"); } }, { className: 'session-button-cancel' }, 7);
+    const cancelButton = SessionButton('Cancel', 'close', () => { showSessionWindow.value = false; closeWindowOnAllMonitors("session"); }, { className: 'session-button-cancel' }, 7);
 
     const sessionDescription = Widget.Box({
         vertical: true,

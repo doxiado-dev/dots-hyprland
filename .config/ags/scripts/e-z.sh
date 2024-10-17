@@ -42,9 +42,7 @@ if [[ "$1" == "--full" ]]; then
     flameshot screen -r > $temp_file
 else
     flameshot gui -r > $temp_file &
-    sleep 0.2
-    hyprctl dispatch focuswindow flameshot
-    hyprctl dispatch fullscreenstate 3
+    ags run-js "closeEverything();"
     wait
 fi
 
