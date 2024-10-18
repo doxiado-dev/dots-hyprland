@@ -21,17 +21,19 @@ class BrightnessServiceBase extends Service {
 
     // the setter has to be in snake_case too
     set screen_value(percent) {
-        percent = clamp(percent, 0, 1);
+        if (percent < 0.05) {
+            percent = 0.01;
+        } else if (this._screenValue === 0.01 && percent > 0.01) {
+            percent = 0.05;
+        } else {
+            percent = clamp(percent, 0, 1);
+        }
         this._screenValue = percent;
 
         Utils.execAsync(this.setBrightnessCmd(percent))
             .then(() => {
-                // signals has to be explicity emitted
                 this.emit('screen-changed', percent);
                 this.notify('screen-value');
-
-                // or use Service.changed(propName: string) which does the above two
-                // this.changed('screen');
             })
             .catch(print);
     }
