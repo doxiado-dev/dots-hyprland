@@ -146,6 +146,9 @@ export default (overviewMonitor = 0) => {
                   `dispatch closewindow address:${address}`,
                 ).then(() => {
                   button.destroy();
+                  setTimeout(() => {
+                    overviewTick.setValue(!overviewTick.value);
+                  }, 10);
                 }).catch(print);
               },
             }),
