@@ -489,7 +489,11 @@ const WeatherWidget = () => {
     } else {
       self.children[1].label = `${temperature}°${temperature}°${userOptions.weather.preferredUnit} • Feels like ${feelsLike}°${userOptions.weather.preferredUnit}`;
     }
-    self.tooltipText = weatherDesc;
+    if (userOptions.weather.onlyIcon || (userOptions.bar.bluetooth.weatherIconOnlyOnConnect && Bluetooth.connected_devices.length > 0)) {
+      self.tooltipText = `${temperature}°${userOptions.weather.preferredUnit} • ${weatherDesc}`;
+    } else {
+      self.tooltipText = weatherDesc;
+    }
   };
 
   const fetchWeather = (self, city) => {
