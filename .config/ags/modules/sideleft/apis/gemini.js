@@ -51,13 +51,13 @@ const GeminiInfo = () => {
             className: "txt-smallie txt-subtext",
             wrap: true,
             justify: Gtk.Justification.CENTER,
-            label: "Powered by Google",
+            label: getString("Powered by Google"),
           }),
           Button({
             className: "txt-subtext txt-norm icon-material",
             label: "info",
             tooltipText:
-              "Uses gemini-pro.\nNot affiliated, endorsed, or sponsored by Google.\n\nPrivacy: Chat messages aren't linked to your account,\n    but will be read by human reviewers to improve the model.",
+              getString("Uses gemini-pro.\nNot affiliated, endorsed, or sponsored by Google.\n\nPrivacy: Chat messages aren't linked to your account,\n    but will be read by human reviewers to improve the model."),
             setup: setupCursorHoverInfo,
           }),
         ],
@@ -96,11 +96,11 @@ export const GeminiSettings = () =>
           hpack: "center",
           icon: "casino",
           name: "Randomness",
-          desc: "Gemini's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1",
+          desc: getString("Gemini's temperature value.\n  Precise = 0\n  Balanced = 0.5\n  Creative = 1"),
           options: [
-            { value: 0.0, name: "Precise" },
-            { value: 0.5, name: "Balanced" },
-            { value: 1.0, name: "Creative" },
+            { value: 0.0, name: getString("Precise") },
+            { value: 0.5, name: getString("Balanced") },
+            { value: 1.0, name: getString("Creative") },
           ],
           initIndex: 2,
           onChange: (value, name) => {
@@ -115,8 +115,8 @@ export const GeminiSettings = () =>
           children: [
             ConfigToggle({
               icon: "model_training",
-              name: "Enhancements",
-              desc: "Tells Gemini:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points",
+              name: getString("Enhancements"),
+              desc: getString("Tells Gemini:\n- It's a Linux sidebar assistant\n- Be brief and use bullet points"),
               initValue: GeminiService.assistantPrompt,
               onChange: (self, newValue) => {
                 GeminiService.assistantPrompt = newValue;
@@ -124,8 +124,8 @@ export const GeminiSettings = () =>
             }),
             ConfigToggle({
               icon: "shield",
-              name: "Safety",
-              desc: "When turned off, tells the API (not the model) \nto not block harmful/explicit content",
+              name: getString("Safety"),
+              desc: getString("When turned off, tells the API (not the model) \nto not block harmful/explicit content"),
               initValue: GeminiService.safe,
               onChange: (self, newValue) => {
                 GeminiService.safe = newValue;
@@ -133,8 +133,8 @@ export const GeminiSettings = () =>
             }),
             ConfigToggle({
               icon: "history",
-              name: "History",
-              desc: "Saves chat history\nMessages in previous chats won't show automatically, but they are there",
+              name: getString("History"),
+              desc: getString("Saves chat history\nMessages in previous chats won't show automatically, but they are there"),
               initValue: GeminiService.useHistory,
               onChange: (self, newValue) => {
                 GeminiService.useHistory = newValue;
@@ -261,7 +261,7 @@ export const sendMessage = (text) => {
     } else if (text.startsWith("/model"))
       chatContent.add(
         SystemMessage(
-          `Currently using \`${GeminiService.modelName}\``,
+          `${getString("Currently using")} \`${GeminiService.modelName}\``,
           "/model",
           geminiView,
         ),
@@ -281,7 +281,7 @@ export const sendMessage = (text) => {
       if (parts.length == 1)
         chatContent.add(
           SystemMessage(
-            `Key stored in:\n\`${GeminiService.keyPath}\`\nTo update this key, type \`/key YOUR_API_KEY\``,
+            `${getString("Key stored in:")} \n\`${GeminiService.keyPath}\`\n${getString("To update this key, type")} \`/key YOUR_API_KEY\``,
             "/key",
             geminiView,
           ),
@@ -290,7 +290,7 @@ export const sendMessage = (text) => {
         GeminiService.key = parts[1];
         chatContent.add(
           SystemMessage(
-            `Updated API Key at\n\`${GeminiService.keyPath}\``,
+            `${getString("Updated API Key at")}\n\`${GeminiService.keyPath}\``,
             "/key",
             geminiView,
           ),
@@ -299,8 +299,8 @@ export const sendMessage = (text) => {
     } else if (text.startsWith("/test"))
       chatContent.add(SystemMessage(markdownTest, `Markdown test`, geminiView));
     else
-      chatContent.add(SystemMessage(`Invalid command.`, "Error", geminiView));
-  } else {
+        chatContent.add(SystemMessage(`Invalid command.`, "Error", geminiView));
+    } else {
     GeminiService.send(text);
   }
 };

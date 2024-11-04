@@ -209,7 +209,7 @@ export default () => {
     children: [
       Label({
         className: "txt txt-small",
-        label: "Result",
+        label: getString("Result"),
       }),
     ],
     attribute: {
@@ -325,7 +325,7 @@ export default () => {
   });
   return SidebarModule({
     icon: MaterialIcon("colorize", "norm"),
-    name: 'Color picker',
+    name: getString("Color picker"),
     revealChild: false,
     child: Box({
       className: "spacing-h-5",

@@ -175,7 +175,7 @@ export default (props) => {
             className: "spacing-v-5 txt-subtext",
             children: [
               MaterialIcon("brand_awareness", "gigantic"),
-              Label({ label: "No audio source", className: "txt-small" }),
+              Label({ label: getString("No audio source"), className: "txt-small" }),
             ],
           }),
         ],

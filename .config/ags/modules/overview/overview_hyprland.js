@@ -141,10 +141,13 @@ export default (overviewMonitor = 0) => {
                 xalign: 0,
                 label: "Close (Middle-click)",
               }),
-              onActivate: () =>
+              onActivate: () => {
                 Hyprland.messageAsync(
                   `dispatch closewindow address:${address}`,
-                ),
+                ).then(() => {
+                  button.destroy();
+                }).catch(print);
+              },
             }),
             ContextMenuWorkspaceArray({
               label: "Dump windows to workspace",

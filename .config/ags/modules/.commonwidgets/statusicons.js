@@ -583,21 +583,21 @@ const VPNIndicator = () => Widget.Revealer({
 const Utilities = () => {
   const availableUtilities = {
     snip: {
-      name: "Screen snip",
+      name: getString('Screen snip'),
       icon: "screenshot_region",
       onClicked: () => {
         Utils.execAsync(`${App.configDir}/scripts/grimblast.sh copy area`).catch(print);
       },
     },
     picker: {
-      name: "Color picker",
+      name: getString('Color picker'),
       icon: "colorize",
       onClicked: () => {
         Utils.execAsync(["hyprpicker", "-a"]).catch(print);
       },
     },
     keyboard: {
-      name: "Toggle on-screen keyboard",
+      name: getString('Toggle on-screen keyboard'),
       icon: "keyboard",
       onClicked: () => {
         toggleWindowOnAllMonitors("osk");

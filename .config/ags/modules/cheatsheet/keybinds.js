@@ -45,7 +45,7 @@ const Keybind = (keybindData, type) => { // type: either "keys" or "actions"
     });
     const Action = (text) => Label({ // Binds
         xalign: 0,
-        label: text,
+        label: getString(text),
         className: "txt txt-small cheatsheet-action",
     })
     return Widget.Box({
@@ -74,7 +74,7 @@ const Section = (sectionData, scope) => {
     const name = Label({
         xalign: 0,
         className: "cheatsheet-category-title txt margin-bottom-10",
-        label: sectionData.name,
+        label: getString(sectionData.name),
     })
     const binds = Box({
         className: 'spacing-h-10',

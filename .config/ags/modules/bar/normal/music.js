@@ -199,15 +199,15 @@ const SystemResourcesOrCustomModule = () => {
         const resources = userOptions.bar.systemResources.map(resource => {
             switch (resource) {
                 case 'ram':
-                    return BarResource('RAM Usage', 'memory', `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
+                    return BarResource(getString('RAM Usage'), 'memory', `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
                         'bar-ram-circprog', 'bar-ram-txt', 'bar-ram-icon');
                 case 'cpu':
-                    return BarResource('CPU Usage', 'settings_motion_mode', `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
+                    return BarResource(getString('CPU Usage'), 'settings_motion_mode', `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
                         'bar-cpu-circprog', 'bar-cpu-txt', 'bar-cpu-icon');
                 case 'network':
                     return NetworkSpeed();
                 case 'swap':
-                    return BarResource('Swap Usage', 'swap_horiz', `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
+                    return BarResource(getString('Swap Usage'), 'swap_horiz', `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
                         'bar-swap-circprog', 'bar-swap-txt', 'bar-swap-icon');
                 default:
                     return null;
@@ -305,7 +305,7 @@ const MusicWidget = () => {
         setup: (self) => self.hook(Mpris, label => {
             const mpris = Mpris.getPlayer('');
             if (mpris) label.label = `${trimTrackTitle(mpris.trackTitle)} • ${mpris.trackArtists.join(', ')}`;
-            else label.label = 'No media';
+            else label.label = getString('No media');
         }),
     });
 

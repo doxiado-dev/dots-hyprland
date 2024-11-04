@@ -80,6 +80,10 @@ let configOptions = {
       color: "rgba(109,134,153,1)",
     },
   },
+  i18n: {
+    langCode: "", // Customize the locale, such as zh_CN, Optional value references "~/.config/ags/i18n/locales/"
+    extraLogs: false,
+  },
   monitors: {
     scaleMethod: "division", // Either "division" [default] or "gdk"
   },

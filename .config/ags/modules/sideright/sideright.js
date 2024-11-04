@@ -35,28 +35,28 @@ const centerWidgets = [
         contentWidget: ModuleNotificationList,
     },
     {
-        name: 'Audio controls',
+        name: getString('Audio controls'),
         materialIcon: 'volume_up',
         contentWidget: ModuleAudioControls,
     },
     {
-        name: 'Bluetooth',
+        name: getString('Bluetooth'),
         materialIcon: 'bluetooth',
         contentWidget: ModuleBluetooth,
     },
     {
-        name: 'Wifi networks',
+        name: getString('Wifi networks'),
         materialIcon: 'wifi',
         contentWidget: ModuleWifiNetworks,
         onFocus: () => execAsync('nmcli dev wifi list').catch(print),
     },
     {
-        name: 'Live config',
+        name: getString('Live config'),
         materialIcon: 'tune',
         contentWidget: ModuleConfigure,
     },
     ...(userOptions.bar.indicators.includes('vpn') ? [{
-        name: "VPN",
+        name: 'VPN',
         materialIcon: 'lock',
         contentWidget: ModuleVPN,
     }] : []),
@@ -106,8 +106,8 @@ const timeRow = Box({
                 };
 
                 self.poll(5000, label => {
-                	getUptime().then(upTimeString => {
-                    	label.label = `Uptime: ${upTimeString}`;
+                    getUptime().then(upTimeString => {
+                        label.label = `${getString("Uptime:")} ${upTimeString}`;
                     }).catch(err => {
                     	console.error(`Failed to fetch uptime: ${err}`);
                     });
