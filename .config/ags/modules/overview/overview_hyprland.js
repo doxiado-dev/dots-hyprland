@@ -144,12 +144,7 @@ export default (overviewMonitor = 0) => {
               onActivate: () => {
                 Hyprland.messageAsync(
                   `dispatch closewindow address:${address}`,
-                ).then(() => {
-                  button.destroy();
-                  setTimeout(() => {
-                    overviewTick.setValue(!overviewTick.value);
-                  }, 10);
-                }).catch(print);
+                ).catch(print);
               },
             }),
             ContextMenuWorkspaceArray({
