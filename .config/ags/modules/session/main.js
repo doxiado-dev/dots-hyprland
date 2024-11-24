@@ -7,7 +7,7 @@ export default (id = 0) => PopupWindow({ // On-screen keyboard
     name: `session${id}`,
     visible: false,
     keymode: 'on-demand',
-    layer: 'overlay',
+    layer: 'top',
     exclusivity: 'ignore',
     anchor: ['top', 'bottom', 'left', 'right'],
     child: SessionScreen({ id: id }),

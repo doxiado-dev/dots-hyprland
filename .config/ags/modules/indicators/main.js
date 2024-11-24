@@ -9,7 +9,7 @@ export default (monitor = 0) => Widget.Window({
     name: `indicator${monitor}`,
     monitor,
     className: 'indicator',
-    layer: 'overlay',
+    layer: 'top',
     // exclusivity: 'ignore',
     visible: true,
     anchor: ['top'],

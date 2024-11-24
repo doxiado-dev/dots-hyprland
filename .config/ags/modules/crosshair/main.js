@@ -6,7 +6,7 @@ export default (monitor = 0, ) => {
     return Widget.Window({
         monitor,
         name: `crosshair${monitor}`,
-        layer: 'overlay',
+        layer: 'top',
         exclusivity: 'ignore',
         visible: false,
         child: Widget.Icon({
