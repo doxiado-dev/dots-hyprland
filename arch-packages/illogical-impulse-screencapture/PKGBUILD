@@ -9,7 +9,7 @@ depends=(
 	wf-recorder
 	wlr-randr
 	grim
-	e-z-recorder
+	vnrez
 	flameshot-git
 	slurp
 )
