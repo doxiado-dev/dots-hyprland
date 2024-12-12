@@ -59,7 +59,14 @@ async function batteryMessage() {
         Utils.execAsync(['bash', '-c',
             `(notify-send "${suspendMessage}" "Critical battery level (${perc}% remaining)" -u critical -a '${APP_NAME}' -t ${userOptions.battery.suspendDelay * 1000}) &`
         ]).catch(print);
-        Utils.execAsync(['bash', '-c', `sleep ${userOptions.battery.suspendDelay}; if [ "$(upower -i $(upower -e | grep 'BAT') | awk '/state/ {print $2}')" != "charging" ]; then systemctl suspend; fi`])
+        Utils.execAsync(['bash', '-c', `
+            sleep ${userOptions.battery.suspendDelay};
+            if [ "$(upower -i $(upower -e | grep 'BAT') | awk '/state/ {print $2}')" != "charging" ]; then
+                systemctl suspend -i;
+                sleep 2;
+                exit 0;
+            fi
+        `])
             .then(() => {
                 if (!userOptions.battery.preventWakeUp && !Battery.charging && perc <= userOptions.battery.suspendThreshold) {
                     systemSuspended = true;
