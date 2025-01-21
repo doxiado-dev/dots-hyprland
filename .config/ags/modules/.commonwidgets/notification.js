@@ -152,6 +152,7 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
       hovered: false,
       id: notifObject.id,
     },
+    className: `notification-${notifObject.id}`,
     revealChild: false,
     transition: "slide_down",
     transitionDuration: userOptions.animations.durationLarge,
