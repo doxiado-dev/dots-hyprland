@@ -194,10 +194,10 @@ let configOptions = {
     substitutions: {
       "code-url-handler": "visual-studio-code",
       Code: "visual-studio-code",
+      cs2: "steam_icon_730",
       "GitHub Desktop": "github-desktop",
       "Minecraft* 1.20.1": "minecraft",
       "gnome-tweaks": "org.gnome.tweaks",
-      "io.github.kukuruzka165.materialgram": "materialgram",
       "dev.zed.Zed": "zed",
       "pavucontrol-qt": "pavucontrol",
       wps: "wps-office2019-kprometheus",
