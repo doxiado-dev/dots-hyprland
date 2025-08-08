@@ -2,7 +2,7 @@
 # Online script for install dots-hyprland.
 
 me="-->online-setup<--"
-remote_repo=refurbishing/dots-hyprland
+remote_repo=doxiado-dev/dots-hyprland
 set -e
 function try { "$@" || sleep 0; }
 function x() {

@@ -1,11 +1,11 @@
 <div align="center">
-    <h1>【 Cortex's Hyprland dotfiles 】</h1>
+    <h1>【 Doxiado's Hyprland dotfiles 】</h1>
     <h3></h3>
 </div>
 
 <div align="center">
 
-![](https://img.shields.io/github/last-commit/refurbishing/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
+![](https://img.shields.io/github/last-commit/doxiado-dev/dots-hyprland?&style=for-the-badge&color=FFB1C8&logoColor=D9E0EE&labelColor=292324)
 ![](https://img.shields.io/github/stars/end-4/dots-hyprland?style=for-the-badge&logo=andela&color=FFB686&logoColor=D9E0EE&labelColor=292324)
 [![](https://img.shields.io/github/repo-size/end-4/dots-hyprland?color=CAC992&label=SIZE&logo=googledrive&style=for-the-badge&logoColor=D9E0EE&labelColor=292324)](https://github.com/end-4/hyprland)
 ![](https://img.shields.io/badge/issues-skill-green?style=for-the-badge&color=CCE8E9&logoColor=D9E0EE&labelColor=292324)
@@ -33,7 +33,7 @@
 
    - **Automatic**, but guided and transparent, installation for Arch(-based) Linux:
    ```bash
-   bash <(curl -s "https://raw.githubusercontent.com/refurbishing/dots-hyprland/main/setup.sh")
+   bash <(curl -s "https://raw.githubusercontent.com/doxiado-dev/dots-hyprland/main/setup.sh")
    ```
    - **Manual** installation, other distros and more:
      - See the [Wiki](https://end-4.github.io/dots-hyprland-wiki/en/i-i/01setup/)
@@ -66,8 +66,8 @@
 <details>
   <summary>Help improve these dotfiles!</summary>
 
-   - Join the [discussions](https://github.com/refurbishing/dots-hyprland/discussions)
-   - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/refurbishing/dots-hyprland/issues/new/choose)
+   - Join the [discussions](https://github.com/doxiado-dev/dots-hyprland/discussions)
+   - If you'd like to suggest fixes or a new widget, feel free to [open an issue](https://github.com/doxiado-dev/dots-hyprland/issues/new/choose)
 </details>
 
 <div align="center">
